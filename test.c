@@ -57,12 +57,23 @@ int main(void)
     char *lines[numLines];
     lines[0] = "hello and welcome to my channel";
     lines[1] = "hello and welcome to my webpage";
-    lines[2] = "hey there welcome to my webpage";
+    lines[2] = "hey there welcome... to my webpage...";
 
     wordNode *tokenLists[numLines];
     for (size_t i = 0; i < 3; i++)
     {
         tokenLists[i] = tokenize(lines[i], strlen(lines[i]));
         printf("%s\n", ll_implode(tokenLists[i], '_'));
+    }
+
+    wordNode *mainList = malloc(sizeof(wordNode));
+    for (size_t i = 0; i<numLines; i++) {
+        wordNode *curNode = tokenLists[i];
+        while (curNode->next) {
+            size_t count = ll_countword(mainList, curNode->string);
+            printf("got here\n");
+            printf("mainList: %s\n", ll_implode(mainList, '-'));
+            curNode = curNode->next;
+        }
     }
 }

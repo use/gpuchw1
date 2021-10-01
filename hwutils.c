@@ -5,6 +5,36 @@
 #include <stdbool.h>
 #include "hwutils.h"
 
+size_t ll_countword(wordNode *node, char *word)
+{
+    size_t done = 0;
+    size_t finalCount = 0;
+    size_t totalWords = 0;
+    while (node->next && done == 0)
+    {
+        totalWords++;
+        if (0==strcmp(node->string, word)) {
+            node->count++;
+            finalCount = node->count;
+            done = 1;
+        }
+        node = node->next;
+    }
+    if (done == 0) {
+        wordNode *newWord = malloc(sizeof(wordNode));
+        newWord->count = 1;
+        newWord->string = malloc(strlen(word));
+        strncpy(newWord->string, word, strlen(word));
+        if (totalWords == 0) {
+            node = newWord;
+        } else {
+            node->next = newWord;
+        }
+        finalCount = node->count;
+    }
+    return finalCount;
+}
+
 void ll_print(wordNode *word)
 {
     size_t i = 0;
@@ -60,13 +90,13 @@ wordNode *tokenize(char *line, size_t len)
 
     for (i = 0; i < len; i++)
     {
-        printf("[%ld]: %c\n", i, line[i]);
+        // printf("[%ld]: %c\n", i, line[i]);
         if (isletter(line[i]) && i != len - 1)
         {
             if (start_index == -1)
             {
                 start_index = i;
-                printf("  Setting start_index to %ld\n", i);
+                // printf("  Setting start_index to %ld\n", i);
             }
         }
         else
@@ -80,26 +110,26 @@ wordNode *tokenize(char *line, size_t len)
                 {
                     end_index = i - 1;
                 }
-                printf("  Setting end_index to %ld\n", end_index);
+                // printf("  Setting end_index to %ld\n", end_index);
                 char *newStr = malloc(sizeof(char) * (end_index - start_index + 1));
                 strncpy(newStr, line + start_index, end_index - start_index + 1);
-                printf("  New word: [%s]\n", newStr);
+                // printf("  New word: [%s]\n", newStr);
                 wordNode *newNode = malloc(sizeof(wordNode));
                 newNode->string = newStr;
                 if (!firstWord)
                 {
-                    printf("Setting prevNode->next\n");
+                    // printf("Setting prevNode->next\n");
                     prevNode->next = newNode;
                 }
                 else
                 {
                     firstWord = 0;
-                    printf("Setting root\n");
+                    // printf("Setting root\n");
                     root = newNode;
                 }
                 prevNode = newNode;
                 start_index = -1;
-                printf("  Current words: %s\n", ll_implode(root, '|'));
+                // printf("  Current words: %s\n", ll_implode(root, '|'));
             }
         }
     }
