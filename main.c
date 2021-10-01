@@ -32,5 +32,9 @@ int main(void)
     char *imploded = implode(words, numwords);
     printf("imploded: %s\n", imploded);
 
+    char *testline = "it was a dark and stormy night";
+    wordNode *tokenized = tokenize(testline, strlen(testline));
+    ll_print(tokenized);
+
     exit(EXIT_SUCCESS);
 }
