@@ -98,7 +98,7 @@ char *ll_implode(wordNode *word, char sep)
         }
         if (index < newlength)
         {
-            result[index] = ',';
+            result[index] = sep;
             index++;
         }
         tmp_word = tmp_word->next;

@@ -1,6 +1,7 @@
 #include <ctype.h>
 #include <string.h>
 #include <stdlib.h>
+#include <stdio.h>
 #include "hwutils.h"
 
 int main(void)
@@ -19,5 +20,5 @@ int main(void)
 
     ll_print(firstWord);
 
-    printf(ll_implode(firstWord, '|'));
+    printf("%s", ll_implode(firstWord, '|'));
 }
