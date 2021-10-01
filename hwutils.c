@@ -83,10 +83,6 @@ char *ll_implode(wordNode *word, char sep)
     size_t newlength = wordlengthsum + numwords - 1;
     char *result = malloc(sizeof(char) * (newlength + 1));
 
-    printf("numwords: %zu\n", numwords);
-    printf("newlength: %zu\n", newlength);
-    printf("wordlengthsum: %zu\n", wordlengthsum);
-
     size_t index = 0;
     tmp_word = word;
     while (tmp_word)
@@ -118,10 +114,6 @@ char *implode(char **words, size_t numwords)
 
     size_t newlength = wordlengthsum + numwords - 1;
     char *result = malloc(sizeof(char) * (newlength + 1));
-
-    printf("numwords: %zu\n", numwords);
-    printf("newlength: %zu\n", newlength);
-    printf("wordlengthsum: %zu\n", wordlengthsum);
 
     size_t index = 0;
     for (size_t i = 0; i < numwords; i++)

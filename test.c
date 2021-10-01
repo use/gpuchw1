@@ -2,6 +2,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include <stdio.h>
+#include <assert.h>
 #include "hwutils.h"
 
 int main(void)
@@ -21,4 +22,7 @@ int main(void)
     ll_print(firstWord);
 
     printf("%s", ll_implode(firstWord, '|'));
+
+    assert(0 == strcmp("hello|there|again", ll_implode(firstWord, '|')));
+
 }
