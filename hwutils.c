@@ -14,17 +14,29 @@ void ll_print(wordNode *word)
     }
 }
 
+size_t ll_count(wordNode *word)
+{
+    size_t count = 0;
+    while (word)
+    {
+        count++;
+        word = word->next;
+    }
+    return count;
+}
+
 wordNode *tokenize(char *line, size_t len)
 {
     size_t i;
     size_t start_index = -1;
     size_t end_index = -1;
 
-    wordNode *root;
-    wordNode *curNode;
+    wordNode *root = malloc(sizeof(wordNode));
+    wordNode *curNode = malloc(sizeof(wordNode));
 
     for (i = 0; i < len; i++)
     {
+        printf("%c", line[i]);
         if (isletter(line[i]))
         {
             if (start_index == -1)
@@ -37,9 +49,9 @@ wordNode *tokenize(char *line, size_t len)
             if (start_index != -1)
             {
                 end_index = i;
-                char newStr[end_index - start_index];
+                char *newStr = malloc(sizeof(char) * (end_index - start_index));
                 strncpy(newStr, line + start_index, end_index - start_index);
-                wordNode *newNode;
+                wordNode *newNode = malloc(sizeof(wordNode));
                 newNode->string = newStr;
                 if (curNode)
                 {
