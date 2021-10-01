@@ -2,13 +2,40 @@
 #include <stdio.h>
 #include <ctype.h>
 #include <string.h>
+#include <stdbool.h>
 
-// char **tokenize(char *line, size_t len)
-// {
-//     for (int i = 0; i < len; i++)
-//     {
-//     }
-// }
+char **tokenize(char *line, size_t len)
+{
+    size_t i;
+    size_t start_index = -1;
+
+    for (i = 0; i < len; i++)
+    {
+        if (isletter(line[i]))
+        {
+            if (start_index < 0) {
+                start_index = i;
+            } else {
+
+            }
+        } else {
+            end_index = i;
+            // copystring(line, dest, start_index, end_index);
+        }
+
+    }
+}
+
+bool isletter(char c)
+{
+    int ascii = (int)c;
+    if (
+        ascii >= 65 && ascii <= 90 ||
+        ascii >= 97 && ascii <= 122)
+        return true;
+
+    return false;
+}
 
 char *implode(char **words, size_t numwords)
 {
