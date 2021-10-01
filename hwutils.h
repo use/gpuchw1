@@ -14,3 +14,4 @@ void ll_print(wordNode *word);
 bool isletter(char c);
 char *ll_implode(wordNode *word, char sep);
 size_t ll_count(wordNode *word);
+wordNode *ll_lastnode(wordNode *word);
