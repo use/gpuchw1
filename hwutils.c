@@ -7,10 +7,12 @@
 
 void ll_print(wordNode *word)
 {
+    size_t i = 0;
     while (word)
     {
-        printf("%s\n", word->string);
+        printf("%zu: %s\n", i, word->string);
         word = word->next;
+        i++;
     }
 }
 
@@ -27,7 +29,7 @@ wordNode *ll_lastnode(wordNode *word)
 wordNode *ll_nodeatindex(wordNode *word, size_t n)
 {
     size_t index = 0;
-    while (index <= n && word->next)
+    while (index < n && word->next)
     {
         word = word->next;
         index++;
@@ -59,7 +61,7 @@ wordNode *tokenize(char *line, size_t len)
     for (i = 0; i < len; i++)
     {
         printf("[%ld]: %c\n", i, line[i]);
-        if (isletter(line[i]))
+        if (isletter(line[i]) && i != len - 1)
         {
             if (start_index == -1)
             {
@@ -71,7 +73,13 @@ wordNode *tokenize(char *line, size_t len)
         {
             if (start_index != -1)
             {
-                end_index = i - 1;
+                if (i == len - 1) {
+                    end_index = i;
+                }
+                else
+                {
+                    end_index = i - 1;
+                }
                 printf("  Setting end_index to %ld\n", end_index);
                 char *newStr = malloc(sizeof(char) * (end_index - start_index + 1));
                 strncpy(newStr, line + start_index, end_index - start_index + 1);

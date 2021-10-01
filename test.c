@@ -48,4 +48,8 @@ int main(void)
     wordNode *wordat1 = ll_nodeatindex(tokenized, 1);
 
     printf("Word at 1: %s\n", wordat1->string);
+    printf("Word at -1: %s\n", ll_nodeatindex(tokenized, -1)->string);
+    printf("Word at 0: %s\n", ll_nodeatindex(tokenized, 0)->string);
+    printf("Word at 111: %s\n", ll_nodeatindex(tokenized, 111)->string);
+    printf("Word at 7: %s\n", ll_nodeatindex(tokenized, 7)->string);
 }
