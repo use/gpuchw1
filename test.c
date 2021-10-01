@@ -39,7 +39,13 @@ int main(void)
     assert(isletter('Z'));
 
     char *line = "it was a bright cold day in april";
-    wordNode *tized = tokenize(line, strlen(line));
-    printf("count: %ld\n", ll_count(tized));
-    ll_print(tized);
+    wordNode *tokenized = tokenize(line, strlen(line));
+    printf("count: %ld\n", ll_count(tokenized));
+    ll_print(tokenized);
+
+    assert(0==strcmp(tokenized->string, "it"));
+
+    wordNode *wordat1 = ll_nodeatindex(tokenized, 1);
+
+    printf("Word at 1: %s\n", wordat1->string);
 }

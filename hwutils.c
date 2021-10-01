@@ -24,6 +24,17 @@ wordNode *ll_lastnode(wordNode *word)
     return lastWord;
 }
 
+wordNode *ll_nodeatindex(wordNode *word, size_t n)
+{
+    size_t index = 0;
+    while (index <= n && word->next)
+    {
+        word = word->next;
+        index++;
+    }
+    return word;
+}
+
 size_t ll_count(wordNode *word)
 {
     size_t count = 0;
