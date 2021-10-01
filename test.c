@@ -43,7 +43,7 @@ int main(void)
     printf("count: %ld\n", ll_count(tokenized));
     ll_print(tokenized);
 
-    assert(0==strcmp(tokenized->string, "it"));
+    assert(0 == strcmp(tokenized->string, "it"));
 
     wordNode *wordat1 = ll_nodeatindex(tokenized, 1);
 
@@ -52,4 +52,17 @@ int main(void)
     printf("Word at 0: %s\n", ll_nodeatindex(tokenized, 0)->string);
     printf("Word at 111: %s\n", ll_nodeatindex(tokenized, 111)->string);
     printf("Word at 7: %s\n", ll_nodeatindex(tokenized, 7)->string);
+
+    size_t numLines = 3;
+    char *lines[numLines];
+    lines[0] = "hello and welcome to my channel";
+    lines[1] = "hello and welcome to my webpage";
+    lines[2] = "hey there welcome to my webpage";
+
+    wordNode *tokenLists[numLines];
+    for (size_t i = 0; i < 3; i++)
+    {
+        tokenLists[i] = tokenize(lines[i], strlen(lines[i]));
+        printf("%s\n", ll_implode(tokenLists[i], '_'));
+    }
 }

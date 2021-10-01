@@ -5,6 +5,7 @@ typedef struct wordNode
 {
     char *string;
     struct wordNode *next;
+    size_t count;
 } wordNode;
 
 wordNode *tokenize(char *line, size_t len);
