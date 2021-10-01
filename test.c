@@ -23,6 +23,7 @@ int main(void)
 
     printf("%s\n", ll_implode(firstWord, '|'));
     assert(0 == strcmp("hello|there|again", ll_implode(firstWord, '|')));
+    assert(0 == strcmp("again", ll_implode(thirdWord, '|')));
 
     printf("count: %ld\n", ll_count(firstWord));
     assert(3 == ll_count(firstWord));
@@ -71,8 +72,9 @@ int main(void)
         wordNode *curNode = tokenLists[i];
         while (curNode->next) {
             size_t count = ll_countword(mainList, curNode->string);
-            printf("got here\n");
-            printf("mainList: %s\n", ll_implode(mainList, '-'));
+            printf("AAAAAA\n");
+            ll_print(mainList);
+            // printf("mainList: %s\n", ll_implode(mainList, '-'));
             curNode = curNode->next;
         }
     }

@@ -5,33 +5,40 @@
 #include <stdbool.h>
 #include "hwutils.h"
 
-size_t ll_countword(wordNode *node, char *word)
+size_t ll_countword(wordNode *rootNode, char *word)
 {
     size_t done = 0;
     size_t finalCount = 0;
     size_t totalWords = 0;
-    while (node->next && done == 0)
+    wordNode *curNode = rootNode;
+    while (curNode->next && done == 0)
     {
+        printf("agot here\n");
         totalWords++;
-        if (0==strcmp(node->string, word)) {
-            node->count++;
-            finalCount = node->count;
+        if (0==strcmp(curNode->string, word)) {
+            curNode->count++;
+            finalCount = curNode->count;
             done = 1;
         }
-        node = node->next;
+        curNode = curNode->next;
     }
+    printf("bgot here\n");
     if (done == 0) {
         wordNode *newWord = malloc(sizeof(wordNode));
         newWord->count = 1;
         newWord->string = malloc(strlen(word));
         strncpy(newWord->string, word, strlen(word));
+        printf("cgot here\n");
         if (totalWords == 0) {
-            node = newWord;
+            rootNode = newWord;
         } else {
-            node->next = newWord;
+            curNode->next = newWord;
         }
-        finalCount = node->count;
+        finalCount = newWord->count;
     }
+    printf("list:\n");
+    ll_print(rootNode);
+    printf("dgot here\n");
     return finalCount;
 }
 
@@ -40,7 +47,7 @@ void ll_print(wordNode *word)
     size_t i = 0;
     while (word)
     {
-        printf("%zu: %s\n", i, word->string);
+        printf("%zu: %s (%lu)\n", i, word->string, word->count);
         word = word->next;
         i++;
     }
