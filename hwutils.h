@@ -21,3 +21,8 @@ size_t ll_countword(wordNode **list, char *word);
 void ll_deletelast(wordNode *word);
 void ll_append(wordNode *word, char *str);
 size_t ll_getwordcount(wordNode *curWord, char *word);
+wordNode **ll_getarray(wordNode *curWord);
+void ll_printarray(wordNode *arr[], size_t arrCount);
+void ll_sortarray(wordNode *arr[], size_t arrCount, char *type);
+int comparebystring(const void *a, const void *b);
+int comparebycount(const void *a, const void *b);

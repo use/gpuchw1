@@ -5,6 +5,55 @@
 #include <stdbool.h>
 #include "hwutils.h"
 
+int comparebystring(const void *a, const void *b)
+{
+    wordNode *ptr_a = *(wordNode **)a;
+    wordNode *ptr_b = *(wordNode **)b;
+    return strcmp(ptr_a->string, ptr_b->string);
+}
+
+int comparebycount(const void *a, const void *b)
+{
+    wordNode *ptr_a = *(wordNode **)a;
+    wordNode *ptr_b = *(wordNode **)b;
+    return ptr_a->count - ptr_b->count;
+}
+
+void ll_sortarray(wordNode *arr[], size_t count, char *type)
+{
+    if (0 == strcmp(type, "string"))
+    {
+        qsort(arr, count, sizeof(wordNode *), comparebystring);
+    }
+    else
+    {
+        qsort(arr, count, sizeof(wordNode *), comparebycount);
+    }
+}
+
+wordNode **ll_getarray(wordNode *curWord)
+{
+    size_t count = ll_count(curWord);
+
+    wordNode **arr = malloc(sizeof(wordNode *) * count);
+
+    for (size_t i = 0; i < count; i++)
+    {
+        arr[i] = curWord;
+        curWord = curWord->next;
+    }
+
+    return arr;
+}
+
+void ll_printarray(wordNode *arr[], size_t count)
+{
+    for (size_t i = 0; i < count; i++)
+    {
+        printf("[%ld] %s (%ld)\n", i, arr[i]->string, arr[i]->count);
+    }
+}
+
 size_t ll_countword(wordNode **rootNode, char *word)
 {
     size_t done = 0;

@@ -92,4 +92,30 @@ int main(void)
 
     assert(4 == ll_getwordcount(mainList, "hello"));
     assert(0 == ll_getwordcount(mainList, "asdfasdf"));
+
+    char *anotherLine = "red orange yellow green blue purple";
+    wordNode *anotherList = tokenize(anotherLine, strlen(anotherLine));
+    printf("word: %s\n", ll_implode(anotherList, ','));
+    wordNode **arr = ll_getarray(anotherList);
+    size_t arrCount = ll_count(anotherList);
+    ll_printarray(arr, arrCount);
+    ll_sortarray(arr, arrCount, "string");
+    printf("Sorted by string alphabetically:\n");
+    ll_printarray(arr, arrCount);
+
+    wordNode **mainListArr = ll_getarray(mainList);
+    size_t mainListCount = ll_count(mainList);
+    printf("List of words:\n");
+    ll_printarray(mainListArr, mainListCount);
+    printf("Sorted by string:\n");
+    ll_sortarray(mainListArr, mainListCount, "string");
+    ll_printarray(mainListArr, mainListCount);
+    assert(0 == strcmp(mainListArr[0]->string, "and"));
+    assert(0 == strcmp(mainListArr[8]->string, "welcome"));
+    printf("Sorted by count:\n");
+    ll_sortarray(mainListArr, mainListCount, "count");
+    assert(0 == strcmp(mainListArr[0]->string, "channel"));
+    assert(0 == strcmp(mainListArr[8]->string, "hello"));
+    assert(4 == mainListArr[8]->count);
+    ll_printarray(mainListArr, mainListCount);
 }
