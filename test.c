@@ -39,6 +39,17 @@ int main(void)
     assert(isletter('z'));
     assert(isletter('Z'));
 
+    char *testLineDeleteLast = "white blue black red green";
+    wordNode *colorList = tokenize(testLineDeleteLast, strlen(testLineDeleteLast));
+    assert(5 == ll_count(colorList));
+    ll_deletelast(colorList);
+    assert(4 == ll_count(colorList));
+    assert(0 == strcmp("white|blue|black|red", ll_implode(colorList, '|')));
+    ll_append(colorList, "purple");
+    ll_append(colorList, "yellow");
+    assert(6 == ll_count(colorList));
+    assert(0 == strcmp("white|blue|black|red|purple|yellow", ll_implode(colorList, '|')));
+
     char *line = "it was a bright cold day in april";
     wordNode *tokenized = tokenize(line, strlen(line));
     printf("count: %ld\n", ll_count(tokenized));
@@ -56,7 +67,7 @@ int main(void)
 
     size_t numLines = 3;
     char *lines[numLines];
-    lines[0] = "hello and welcome to my channel";
+    lines[0] = "hello hello hello and welcome to my channel";
     lines[1] = "hello and welcome to my webpage";
     lines[2] = "hey there welcome... to my webpage...";
 
@@ -70,11 +81,9 @@ int main(void)
     wordNode *mainList = malloc(sizeof(wordNode));
     for (size_t i = 0; i<numLines; i++) {
         wordNode *curNode = tokenLists[i];
-        while (curNode->next) {
-            size_t count = ll_countword(mainList, curNode->string);
-            printf("AAAAAA\n");
+        while (curNode) {
+            size_t count = ll_countword(&mainList, curNode->string);
             ll_print(mainList);
-            // printf("mainList: %s\n", ll_implode(mainList, '-'));
             curNode = curNode->next;
         }
     }

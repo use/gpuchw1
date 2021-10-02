@@ -17,4 +17,6 @@ char *ll_implode(wordNode *word, char sep);
 size_t ll_count(wordNode *word);
 wordNode *ll_lastnode(wordNode *word);
 wordNode *ll_nodeatindex(wordNode *word, size_t n);
-size_t ll_countword(wordNode *list, char *word);
+size_t ll_countword(wordNode **list, char *word);
+void ll_deletelast(wordNode *word);
+void ll_append(wordNode *word, char *str);

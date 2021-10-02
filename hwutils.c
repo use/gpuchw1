@@ -5,41 +5,60 @@
 #include <stdbool.h>
 #include "hwutils.h"
 
-size_t ll_countword(wordNode *rootNode, char *word)
+size_t ll_countword(wordNode **rootNode, char *word)
 {
     size_t done = 0;
     size_t finalCount = 0;
     size_t totalWords = 0;
-    wordNode *curNode = rootNode;
-    while (curNode->next && done == 0)
+    wordNode *curNode = *rootNode;
+    while (curNode->string && done == 0)
     {
-        printf("agot here\n");
         totalWords++;
         if (0==strcmp(curNode->string, word)) {
             curNode->count++;
             finalCount = curNode->count;
             done = 1;
         }
-        curNode = curNode->next;
+        if (curNode->next)
+            curNode = curNode->next;
+        else
+            break;
     }
-    printf("bgot here\n");
     if (done == 0) {
         wordNode *newWord = malloc(sizeof(wordNode));
         newWord->count = 1;
         newWord->string = malloc(strlen(word));
         strncpy(newWord->string, word, strlen(word));
-        printf("cgot here\n");
         if (totalWords == 0) {
-            rootNode = newWord;
+            *rootNode = newWord;
         } else {
             curNode->next = newWord;
         }
         finalCount = newWord->count;
     }
-    printf("list:\n");
-    ll_print(rootNode);
-    printf("dgot here\n");
     return finalCount;
+}
+
+void ll_append(wordNode *word, char *str) {
+    while (word->next) {
+        word = word->next;
+    }
+    wordNode *newWord = malloc(sizeof(wordNode));
+    newWord->string = malloc(strlen(str));
+    strncpy(newWord->string, str, strlen(str));
+    word->next = newWord;
+}
+
+void ll_deletelast(wordNode *word)
+{
+    wordNode *prevWord = word;
+    while (word->next)
+    {
+        prevWord = word;
+        word = word->next;
+    }
+    prevWord->next = NULL;
+    free(word);
 }
 
 void ll_print(wordNode *word)
