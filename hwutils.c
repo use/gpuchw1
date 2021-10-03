@@ -46,11 +46,19 @@ wordNode **ll_getarray(wordNode *curWord)
     return arr;
 }
 
-void ll_printarray(wordNode *arr[], size_t count)
+void ll_printarray(wordNode *arr[], size_t count, int perLine)
 {
     for (size_t i = 0; i < count; i++)
     {
-        printf("[%ld] %s (%ld)\n", i, arr[i]->string, arr[i]->count);
+        printf("[%ld] %s:%ld", i, arr[i]->string, arr[i]->count);
+        if (0 == (i + 1) % perLine)
+        {
+            printf("\n");
+        }
+        else
+        {
+            printf(" ");
+        }
     }
 }
 

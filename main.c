@@ -25,15 +25,14 @@ int main(void)
     {
         lineCounter++;
         lowercase(line, len);
-        printf("[%lu] Line Length: %zu:\n", lineCounter, len);
-        printf("\"%s\"\n", line);
+        // printf("[%lu] Line Length: %zu:\n", lineCounter, len);
+        // printf("\"%s\"\n", line);
 
         wordNode *curNode = tokenize(line, strlen(line));
-        printf("First word: \"%s\"\n", curNode->string);
         // ignore blank lines
         if (!curNode->string)
         {
-            printf("Skipping line\n");
+            // printf("Skipping line\n");
             continue;
         }
         while (curNode)
@@ -48,16 +47,16 @@ int main(void)
     size_t arrLen = ll_count(mainList);
 
     printf("Array:\n");
-    ll_printarray(mainListArray, arrLen);
+    ll_printarray(mainListArray, arrLen, 10);
 
     printf("Size: %lu\n", arrLen);
     printf("Sort by word:\n");
     ll_sortarray(mainListArray, arrLen, "string");
-    ll_printarray(mainListArray, arrLen);
+    ll_printarray(mainListArray, arrLen, 10);
 
     printf("Sort by count:\n");
     ll_sortarray(mainListArray, arrLen, "count");
-    ll_printarray(mainListArray, arrLen);
+    ll_printarray(mainListArray, arrLen, 10);
 
     fclose(fp);
     if (line)

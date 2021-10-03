@@ -105,23 +105,23 @@ int main(void)
     printf("word: %s\n", ll_implode(anotherList, ','));
     wordNode **arr = ll_getarray(anotherList);
     size_t arrCount = ll_count(anotherList);
-    ll_printarray(arr, arrCount);
+    ll_printarray(arr, arrCount, 1);
     ll_sortarray(arr, arrCount, "string");
     printf("Sorted by string alphabetically:\n");
-    ll_printarray(arr, arrCount);
+    ll_printarray(arr, arrCount, 1);
 
     wordNode **mainListArr = ll_getarray(mainList);
     size_t mainListCount = ll_count(mainList);
     printf("List of words:\n");
-    ll_printarray(mainListArr, mainListCount);
+    ll_printarray(mainListArr, mainListCount, 1);
     printf("Sorted by string:\n");
     ll_sortarray(mainListArr, mainListCount, "string");
-    ll_printarray(mainListArr, mainListCount);
+    ll_printarray(mainListArr, mainListCount, 1);
     assert(0 == strcmp(mainListArr[0]->string, "and"));
     assert(0 == strcmp(mainListArr[6]->string, "welcome"));
     printf("Sorted by count:\n");
     ll_sortarray(mainListArr, mainListCount, "count");
-    ll_printarray(mainListArr, mainListCount);
+    ll_printarray(mainListArr, mainListCount, 1);
     assert(0 == strcmp(mainListArr[0]->string, "channel"));
     assert(0 == strcmp(mainListArr[6]->string, "hello"));
     assert(4 == mainListArr[6]->count);
