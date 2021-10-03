@@ -15,26 +15,27 @@ int main(void)
     if (fp == NULL)
         exit(EXIT_FAILURE);
 
+    wordNode *mainList = malloc(sizeof(wordNode));
+
     while ((len = getline(&line, &len, fp)) != -1)
     {
+        wordNode *curNode = tokenize(line, strlen(line));
+        while (curNode)
+        {
+            size_t count = ll_countword(&mainList, curNode->string);
+            curNode = curNode->next;
+        }
+
         printf("Length: %zu:\n", len);
         printf("%s\n", line);
         lowercase(line, len);
         printf("%s\n", line);
     }
+    ll_print(mainList);
 
     fclose(fp);
     if (line)
         free(line);
-
-    char *words[] = {"a", "bc", "def"};
-    size_t numwords = sizeof(words) / sizeof(words[0]);
-    char *imploded = implode(words, numwords);
-    printf("imploded: %s\n", imploded);
-
-    char *testline = "it was a dark and stormy night";
-    wordNode *tokenized = tokenize(testline, strlen(testline));
-    ll_print(tokenized);
 
     exit(EXIT_SUCCESS);
 }
