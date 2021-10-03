@@ -9,14 +9,18 @@ int main(void)
 {
     wordNode *firstWord = malloc(sizeof(wordNode));
     firstWord->string = "hello";
+    firstWord->count = 1;
+    firstWord->next = NULL;
 
     wordNode *secondWord = malloc(sizeof(wordNode));
     secondWord->string = "there";
+    secondWord->count = 1;
+    firstWord->next = secondWord;
 
     wordNode *thirdWord = malloc(sizeof(wordNode));
     thirdWord->string = "again";
-
-    firstWord->next = secondWord;
+    thirdWord->count = 1;
+    thirdWord->next = NULL;
     secondWord->next = thirdWord;
 
     ll_print(firstWord);
@@ -79,6 +83,9 @@ int main(void)
     }
 
     wordNode *mainList = malloc(sizeof(wordNode));
+    mainList->string = '\0';
+    mainList->next = NULL;
+    mainList->count = 0;
     for (size_t i = 0; i < numLines; i++)
     {
         wordNode *curNode = tokenLists[i];
@@ -132,4 +139,12 @@ int main(void)
     wordNode *ignoreShortWordsTestTokens1 = tokenize(ignoreShortWordsTestText1, strlen(ignoreShortWordsTestText1));
     assert(4 == ll_count(ignoreShortWordsTestTokens1));
     assert(0 == strcmp("fire", ll_nodeatindex(ignoreShortWordsTestTokens1, 0)->string));
+
+    char blankLineTestText[] = "";
+    wordNode *blankLineTestTokens = tokenize(blankLineTestText, strlen(blankLineTestText));
+    assert(0 == ll_count(blankLineTestTokens));
+
+    char blankLineTest2Text[] = " \n\n  \n\r";
+    wordNode *blankLineTest2Tokens = tokenize(blankLineTest2Text, strlen(blankLineTest2Text));
+    assert(0 == ll_count(blankLineTest2Tokens));
 }

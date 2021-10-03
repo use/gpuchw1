@@ -11,26 +11,34 @@ int main(void)
     FILE *fp;
     size_t len;
 
-    fp = fopen("testfile1", "r");
+    fp = fopen("testfile4", "r");
     if (fp == NULL)
         exit(EXIT_FAILURE);
 
     wordNode *mainList = malloc(sizeof(wordNode));
 
+    size_t lineCounter = 0;
     while ((len = getline(&line, &len, fp)) != -1)
     {
+        lineCounter++;
         lowercase(line, len);
+        printf("[%lu] Line Length: %zu:\n", lineCounter, len);
+        printf("\"%s\"\n", line);
+
         wordNode *curNode = tokenize(line, strlen(line));
+        printf("First word: \"%s\"\n", curNode->string);
+        // ignore blank lines
+        if (!curNode->string)
+        {
+            printf("Skipping line\n");
+            continue;
+        }
         while (curNode)
         {
+            // printf("Word: %s\n", curNode->string);
             size_t count = ll_countword(&mainList, curNode->string);
             curNode = curNode->next;
         }
-
-        printf("Length: %zu:\n", len);
-        printf("%s\n", line);
-        lowercase(line, len);
-        printf("%s\n", line);
     }
     ll_print(mainList);
     wordNode **mainListArray = ll_getarray(mainList);

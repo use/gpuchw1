@@ -78,8 +78,11 @@ size_t ll_countword(wordNode **rootNode, char *word)
     {
         wordNode *newWord = malloc(sizeof(wordNode));
         newWord->count = 1;
-        newWord->string = malloc(strlen(word));
-        strncpy(newWord->string, word, strlen(word));
+        newWord->next = NULL;
+        int newStrLen = strlen(word);
+        newWord->string = malloc(newStrLen + 1);
+        strncpy(newWord->string, word, newStrLen);
+        newWord->string[newStrLen] = '\0';
         if (totalWords == 0)
         {
             *rootNode = newWord;
@@ -114,8 +117,12 @@ void ll_append(wordNode *word, char *str)
         word = word->next;
     }
     wordNode *newWord = malloc(sizeof(wordNode));
-    newWord->string = malloc(strlen(str));
-    strncpy(newWord->string, str, strlen(str));
+    newWord->count = 1;
+    newWord->next = NULL;
+    int newStrLen = strlen(str);
+    newWord->string = malloc(newStrLen + 1);
+    strncpy(newWord->string, str, newStrLen);
+    newWord->string[newStrLen] = '\0';
     word->next = newWord;
 }
 
@@ -166,6 +173,10 @@ wordNode *ll_nodeatindex(wordNode *word, size_t n)
 size_t ll_count(wordNode *word)
 {
     size_t count = 0;
+    if (!word->string)
+    {
+        return 0;
+    }
     while (word)
     {
         count++;
@@ -177,11 +188,15 @@ size_t ll_count(wordNode *word)
 wordNode *tokenize(char *line, size_t len)
 {
     size_t i;
-    size_t start_index = -1;
-    size_t end_index = -1;
-    size_t minlength = 2;
+    int start_index = -1;
+    int end_index = -1;
+    int minlength = 2;
 
-    wordNode *root;
+    wordNode *root = malloc(sizeof(wordNode));
+    root->count = 0;
+    root->string = NULL;
+    root->next = NULL;
+
     wordNode *prevNode;
     int firstWord = 1;
 
@@ -211,10 +226,14 @@ wordNode *tokenize(char *line, size_t len)
                 // printf("  Setting end_index to %ld\n", end_index);
                 if ((end_index - start_index + 1) > minlength)
                 {
-                    char *newStr = malloc(sizeof(char) * (end_index - start_index + 1));
-                    strncpy(newStr, line + start_index, end_index - start_index + 1);
+                    int strSize = end_index - start_index + 1;
+                    char *newStr = malloc(sizeof(char) * (strSize + 1));
+                    strncpy(newStr, line + start_index, strSize);
+                    newStr[strSize] = '\0';
                     // printf("  New word: [%s]\n", newStr);
                     wordNode *newNode = malloc(sizeof(wordNode));
+                    newNode->count = 1;
+                    newNode->next = NULL;
                     newNode->string = newStr;
                     if (!firstWord)
                     {
