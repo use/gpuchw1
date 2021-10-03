@@ -19,6 +19,7 @@ int main(void)
 
     while ((len = getline(&line, &len, fp)) != -1)
     {
+        lowercase(line, len);
         wordNode *curNode = tokenize(line, strlen(line));
         while (curNode)
         {

@@ -179,6 +179,7 @@ wordNode *tokenize(char *line, size_t len)
     size_t i;
     size_t start_index = -1;
     size_t end_index = -1;
+    size_t minlength = 2;
 
     wordNode *root;
     wordNode *prevNode;
@@ -208,23 +209,26 @@ wordNode *tokenize(char *line, size_t len)
                     end_index = i - 1;
                 }
                 // printf("  Setting end_index to %ld\n", end_index);
-                char *newStr = malloc(sizeof(char) * (end_index - start_index + 1));
-                strncpy(newStr, line + start_index, end_index - start_index + 1);
-                // printf("  New word: [%s]\n", newStr);
-                wordNode *newNode = malloc(sizeof(wordNode));
-                newNode->string = newStr;
-                if (!firstWord)
+                if ((end_index - start_index + 1) > minlength)
                 {
-                    // printf("Setting prevNode->next\n");
-                    prevNode->next = newNode;
+                    char *newStr = malloc(sizeof(char) * (end_index - start_index + 1));
+                    strncpy(newStr, line + start_index, end_index - start_index + 1);
+                    // printf("  New word: [%s]\n", newStr);
+                    wordNode *newNode = malloc(sizeof(wordNode));
+                    newNode->string = newStr;
+                    if (!firstWord)
+                    {
+                        // printf("Setting prevNode->next\n");
+                        prevNode->next = newNode;
+                    }
+                    else
+                    {
+                        firstWord = 0;
+                        // printf("Setting root\n");
+                        root = newNode;
+                    }
+                    prevNode = newNode;
                 }
-                else
-                {
-                    firstWord = 0;
-                    // printf("Setting root\n");
-                    root = newNode;
-                }
-                prevNode = newNode;
                 start_index = -1;
                 // printf("  Current words: %s\n", ll_implode(root, '|'));
             }

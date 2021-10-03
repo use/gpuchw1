@@ -55,7 +55,7 @@ int main(void)
     printf("count: %ld\n", ll_count(tokenized));
     ll_print(tokenized);
 
-    assert(0 == strcmp(tokenized->string, "it"));
+    assert(0 == strcmp(tokenized->string, "was"));
 
     wordNode *wordat1 = ll_nodeatindex(tokenized, 1);
 
@@ -111,16 +111,25 @@ int main(void)
     ll_sortarray(mainListArr, mainListCount, "string");
     ll_printarray(mainListArr, mainListCount);
     assert(0 == strcmp(mainListArr[0]->string, "and"));
-    assert(0 == strcmp(mainListArr[8]->string, "welcome"));
+    assert(0 == strcmp(mainListArr[6]->string, "welcome"));
     printf("Sorted by count:\n");
     ll_sortarray(mainListArr, mainListCount, "count");
-    assert(0 == strcmp(mainListArr[0]->string, "channel"));
-    assert(0 == strcmp(mainListArr[8]->string, "hello"));
-    assert(4 == mainListArr[8]->count);
     ll_printarray(mainListArr, mainListCount);
+    assert(0 == strcmp(mainListArr[0]->string, "channel"));
+    assert(0 == strcmp(mainListArr[6]->string, "hello"));
+    assert(4 == mainListArr[6]->count);
 
     char *newLineTestText = "asdf,";
     wordNode *newLineTestTokens = tokenize(newLineTestText, strlen(newLineTestText));
     assert(0 == strcmp(ll_lastnode(newLineTestTokens)->string, "asdf"));
     ll_print(newLineTestTokens);
+
+    char lowercaseTestText[] = "ASDF";
+    lowercase(lowercaseTestText, strlen(lowercaseTestText));
+    assert(0 == strcmp(lowercaseTestText, "asdf"));
+
+    char ignoreShortWordsTestText1[] = "a fire is upon the deep";
+    wordNode *ignoreShortWordsTestTokens1 = tokenize(ignoreShortWordsTestText1, strlen(ignoreShortWordsTestText1));
+    assert(4 == ll_count(ignoreShortWordsTestTokens1));
+    assert(0 == strcmp("fire", ll_nodeatindex(ignoreShortWordsTestTokens1, 0)->string));
 }
