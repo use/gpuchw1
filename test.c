@@ -79,12 +79,17 @@ int main(void)
     }
 
     wordNode *mainList = malloc(sizeof(wordNode));
-    for (size_t i = 0; i<numLines; i++) {
+    for (size_t i = 0; i < numLines; i++)
+    {
         wordNode *curNode = tokenLists[i];
-        while (curNode) {
+        while (curNode)
+        {
             size_t count = ll_countword(&mainList, curNode->string);
-            ll_print(mainList);
             curNode = curNode->next;
         }
     }
+    ll_print(mainList);
+
+    assert(4 == ll_getwordcount(mainList, "hello"));
+    assert(0 == ll_getwordcount(mainList, "asdfasdf"));
 }

@@ -14,7 +14,8 @@ size_t ll_countword(wordNode **rootNode, char *word)
     while (curNode->string && done == 0)
     {
         totalWords++;
-        if (0==strcmp(curNode->string, word)) {
+        if (0 == strcmp(curNode->string, word))
+        {
             curNode->count++;
             finalCount = curNode->count;
             done = 1;
@@ -24,14 +25,18 @@ size_t ll_countword(wordNode **rootNode, char *word)
         else
             break;
     }
-    if (done == 0) {
+    if (done == 0)
+    {
         wordNode *newWord = malloc(sizeof(wordNode));
         newWord->count = 1;
         newWord->string = malloc(strlen(word));
         strncpy(newWord->string, word, strlen(word));
-        if (totalWords == 0) {
+        if (totalWords == 0)
+        {
             *rootNode = newWord;
-        } else {
+        }
+        else
+        {
             curNode->next = newWord;
         }
         finalCount = newWord->count;
@@ -39,8 +44,24 @@ size_t ll_countword(wordNode **rootNode, char *word)
     return finalCount;
 }
 
-void ll_append(wordNode *word, char *str) {
-    while (word->next) {
+size_t ll_getwordcount(wordNode *curWord, char *word)
+{
+    while (curWord)
+    {
+        if (0 == strcmp(curWord->string, word))
+        {
+            return curWord->count;
+        }
+        curWord = curWord->next;
+    };
+
+    return 0;
+}
+
+void ll_append(wordNode *word, char *str)
+{
+    while (word->next)
+    {
         word = word->next;
     }
     wordNode *newWord = malloc(sizeof(wordNode));
@@ -129,7 +150,8 @@ wordNode *tokenize(char *line, size_t len)
         {
             if (start_index != -1)
             {
-                if (i == len - 1) {
+                if (i == len - 1)
+                {
                     end_index = i;
                 }
                 else

@@ -20,3 +20,4 @@ wordNode *ll_nodeatindex(wordNode *word, size_t n);
 size_t ll_countword(wordNode **list, char *word);
 void ll_deletelast(wordNode *word);
 void ll_append(wordNode *word, char *str);
+size_t ll_getwordcount(wordNode *curWord, char *word);
