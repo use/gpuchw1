@@ -13,3 +13,5 @@ test: hwutils.o test.o
 
 clean:
 	rm -rf *.o hw1 test
+
+all: clean test hw1
