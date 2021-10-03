@@ -136,7 +136,7 @@ void ll_print(wordNode *word)
     size_t i = 0;
     while (word)
     {
-        printf("%zu: %s (%lu)\n", i, word->string, word->count);
+        printf("%zu: \"%s\" (%lu)\n", i, word->string, word->count);
         word = word->next;
         i++;
     }
@@ -199,7 +199,7 @@ wordNode *tokenize(char *line, size_t len)
         {
             if (start_index != -1)
             {
-                if (i == len - 1)
+                if (i == len - 1 && isletter(line[i]))
                 {
                     end_index = i;
                 }

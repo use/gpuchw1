@@ -118,4 +118,9 @@ int main(void)
     assert(0 == strcmp(mainListArr[8]->string, "hello"));
     assert(4 == mainListArr[8]->count);
     ll_printarray(mainListArr, mainListCount);
+
+    char *newLineTestText = "asdf,";
+    wordNode *newLineTestTokens = tokenize(newLineTestText, strlen(newLineTestText));
+    assert(0 == strcmp(ll_lastnode(newLineTestTokens)->string, "asdf"));
+    ll_print(newLineTestTokens);
 }
