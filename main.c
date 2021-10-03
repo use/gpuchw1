@@ -11,11 +11,14 @@ int main(void)
     FILE *fp;
     size_t len;
 
-    fp = fopen("testfile4", "r");
+    fp = fopen("testfile2", "r");
     if (fp == NULL)
         exit(EXIT_FAILURE);
 
     wordNode *mainList = malloc(sizeof(wordNode));
+    mainList->string = "\0";
+    mainList->next = NULL;
+    mainList->count = 0;
 
     size_t lineCounter = 0;
     while ((len = getline(&line, &len, fp)) != -1)
