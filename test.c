@@ -124,9 +124,10 @@ int main(void)
     printf("Sorted by count:\n");
     ll_sortarray(mainListArr, mainListCount, "count");
     ll_printarray(mainListArr, mainListCount, 1);
-    assert(0 == strcmp(mainListArr[0]->string, "channel"));
-    assert(0 == strcmp(mainListArr[6]->string, "hello"));
-    assert(4 == mainListArr[6]->count);
+    assert(0 == strcmp(mainListArr[0]->string, "hello"));
+    assert(0 == strcmp(mainListArr[6]->string, "there"));
+    assert(4 == mainListArr[0]->count);
+    assert(1 == mainListArr[6]->count);
 
     char *newLineTestText = "asdf,";
     wordNode *newLineTestTokens = tokenize(newLineTestText, strlen(newLineTestText));
@@ -160,7 +161,7 @@ int main(void)
     printf("%s\n", gettablerow("aa", "b", 2, 1, 3, 3));
     assert(0 == strcmp("|aa |b  |", gettablerow("aa", "b", 2, 1, 3, 3)));
     printf("%s\n", gettablesep(3, 3));
-    assert(0 == strcmp("---------", gettablesep(3, 3)));
+    assert(0 == strcmp("|---|---|", gettablesep(3, 3)));
 
     // misc
     char countStr[16];
