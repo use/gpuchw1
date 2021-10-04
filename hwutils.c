@@ -17,7 +17,7 @@ int comparebycount(const void *a, const void *b)
 {
     wordNode *ptr_a = *(wordNode **)a;
     wordNode *ptr_b = *(wordNode **)b;
-    return ptr_a->count - ptr_b->count;
+    return ptr_b->count - ptr_a->count;
 }
 
 void ll_sortarray(wordNode *arr[], size_t count, char *type)
