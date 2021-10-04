@@ -31,3 +31,4 @@ int numberlength(int n);
 char *gettablesep(int a_max, int b_max);
 void writearray(wordNode *arr[], size_t count);
 wordNode *tokenize_and_count(char *line, size_t len);
+void ll_mergelists(wordNode **dest, wordNode **src);

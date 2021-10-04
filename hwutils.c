@@ -167,6 +167,55 @@ char *gettablesep(int a_max, int b_max)
     return result;
 }
 
+void ll_mergelists(wordNode **dest, wordNode **src)
+{
+
+    // iterate through nodes in src
+    wordNode *rootDestNode = *dest;
+    wordNode *curDestNode = *dest;
+    wordNode *curSrcNode = *src;
+    while (curSrcNode)
+    {
+        size_t done = 0;
+        size_t finalCount = 0;
+        size_t totalWords = 0;
+        while (curDestNode->string && done == 0)
+        {
+            totalWords++;
+            if (0 == strcmp(curDestNode->string, curSrcNode->string))
+            {
+                curDestNode->count += curSrcNode->count;
+                done = 1;
+            }
+            if (curDestNode->next)
+                *dest = curDestNode->next;
+            else
+                break;
+        }
+        if (done == 0)
+        {
+            wordNode *newWord = malloc(sizeof(wordNode));
+            newWord->count = 1;
+            newWord->next = NULL;
+            int newStrLen = strlen(curSrcNode->string);
+            newWord->string = malloc(newStrLen + 1);
+            strncpy(newWord->string, curSrcNode->string, newStrLen);
+            newWord->string[newStrLen] = '\0';
+            if (totalWords == 0)
+            {
+                *dest = newWord;
+            }
+            else
+            {
+                curDestNode->next = newWord;
+            }
+            finalCount = newWord->count;
+        }
+        curDestNode = rootDestNode;
+        *src = curSrcNode->next;
+    }
+}
+
 size_t ll_countword(wordNode **rootNode, char *word)
 {
     size_t done = 0;

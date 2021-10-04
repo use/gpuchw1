@@ -182,4 +182,14 @@ int main(void)
     wordNode *tncList2 = tokenize_and_count(tncText2, strlen(tncText2));
     assert(0 == ll_count(tncList2));
     assert(0 == ll_getwordcount(tncList2, "asdf"));
+
+    // merge lists
+    char *mergeText1 = "hello and welcome to my webpage";
+    char *mergeText2 = "hello and welcome to my channel and say hello";
+    wordNode *mergeList1 = tokenize_and_count(mergeText1, strlen(mergeText1));
+    wordNode *mergeList2 = tokenize_and_count(mergeText2, strlen(mergeText2));
+
+    ll_mergelists(&mergeList1, &mergeList2);
+    printf("Merged lists:\n");
+    ll_print(mergeList1);
 }
