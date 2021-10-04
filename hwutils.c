@@ -70,9 +70,11 @@ int numberlength(int n)
 
 void writearray(wordNode *arr[], size_t count)
 {
+    char *wordHeader = "English Word";
+    char *countHeader = "Count";
     // find longest word // and "longest" count, in chars
-    int longestWordLen = 0;
-    int longestNumberLen = 0;
+    int longestWordLen = strlen(wordHeader);
+    int longestNumberLen = strlen(countHeader);
     for (size_t i = 0; i < count; i++)
     {
         int wordLen = strlen(arr[i]->string);
@@ -91,6 +93,15 @@ void writearray(wordNode *arr[], size_t count)
     char *sep = gettablesep(longestWordLen, longestNumberLen);
 
     printf("%s\n", sep);
+    printf("%s\n", gettablerow(
+                       wordHeader,
+                       countHeader,
+                       strlen(wordHeader),
+                       strlen(countHeader),
+                       longestWordLen,
+                       longestNumberLen));
+    printf("%s\n", sep);
+
     for (size_t i = 0; i < count; i++)
     {
         int countLen = numberlength(arr[i]->count);
@@ -143,7 +154,14 @@ char *gettablesep(int a_max, int b_max)
     char *result = malloc(sizeof(char) * strlen + 1);
     for (int i = 0; i < strlen; i++)
     {
-        result[i] = '-';
+        if (i == 0 || i == strlen - 1 || i == a_max + 1)
+        {
+            result[i] = '|';
+        }
+        else
+        {
+            result[i] = '-';
+        }
     }
     result[strlen] = '\0';
     return result;
