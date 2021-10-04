@@ -84,7 +84,7 @@ int main(void)
     }
 
     wordNode *mainList = malloc(sizeof(wordNode));
-    mainList->string = '\0';
+    mainList->string = NULL;
     mainList->next = NULL;
     mainList->count = 0;
     for (size_t i = 0; i < numLines; i++)
