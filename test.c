@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <assert.h>
+#include <math.h>
 #include "hwutils.h"
 
 int main(void)
@@ -147,4 +148,16 @@ int main(void)
     char blankLineTest2Text[] = " \n\n  \n\r";
     wordNode *blankLineTest2Tokens = tokenize(blankLineTest2Text, strlen(blankLineTest2Text));
     assert(0 == ll_count(blankLineTest2Tokens));
+
+    assert(5 == numberlength(12345));
+    assert(1 == numberlength(5));
+    assert(2 == numberlength(10));
+    assert(3 == numberlength(101));
+    assert(3 == numberlength(999));
+    assert(10 == numberlength(1234567890));
+
+    printf("%s\n", gettablerow("aa", "b", 2, 1, 3, 3));
+    assert(0 == strcmp("|aa |b  |", gettablerow("aa", "b", 2, 1, 3, 3)));
+    printf("%s\n", gettablesep(3, 3));
+    assert(0 == strcmp("---------", gettablesep(3, 3)));
 }

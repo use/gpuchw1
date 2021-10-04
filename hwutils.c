@@ -3,6 +3,7 @@
 #include <ctype.h>
 #include <string.h>
 #include <stdbool.h>
+#include <math.h>
 #include "hwutils.h"
 
 int comparebystring(const void *a, const void *b)
@@ -60,6 +61,73 @@ void ll_printarray(wordNode *arr[], size_t count, int perLine)
             printf(" ");
         }
     }
+}
+
+int numberlength(int n)
+{
+    return log10(n) + 1;
+}
+
+void writearray(wordNode *arr[], size_t count)
+{
+    // find longest word // and "longest" count, in chars
+    int longestWordLen = 0;
+    int longestNumberLen = 0;
+    for (size_t i = 0; i < count; i++)
+    {
+        int wordLen = strlen(arr[i]->string);
+        if (wordLen > longestWordLen)
+        {
+            longestWordLen = wordLen;
+        }
+
+        int numberLen = numberlength(arr[i]->count);
+        if (numberLen > longestNumberLen)
+        {
+            longestNumberLen = numberLen;
+        }
+    }
+}
+
+char *gettablerow(char *a_str, char *b_str, int a_len, int b_len, int a_max, int b_max)
+{
+    int a_right_pad = a_max - a_len;
+    int b_right_pad = b_max - b_len;
+
+    char a_pad[a_right_pad];
+    for (int i = 0; i < a_right_pad; i++)
+    {
+        a_pad[i] = ' ';
+    }
+    a_pad[a_right_pad] = '\0';
+    char b_pad[b_right_pad];
+    for (int i = 0; i < b_right_pad; i++)
+    {
+        b_pad[i] = ' ';
+    }
+    b_pad[b_right_pad] = '\0';
+
+    int strlen = 3 + a_max + b_max;
+
+    char *result = malloc(sizeof(char) * strlen + 1);
+
+    snprintf(result, strlen + 1, "|%s%s|%s%s|", a_str, a_pad, b_str, b_pad);
+
+    result[strlen] = '\0';
+
+    return result;
+}
+
+char *gettablesep(int a_max, int b_max)
+{
+    int strlen = 3 + a_max + b_max;
+    char *result = malloc(sizeof(char) * strlen + 1);
+    for (int i = 0; i < strlen; i++)
+    {
+        result[i] = '-';
+    }
+    result[strlen] = '\0';
+    return result;
 }
 
 size_t ll_countword(wordNode **rootNode, char *word)
