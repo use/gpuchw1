@@ -211,7 +211,7 @@ size_t ll_countword(wordNode **rootNode, char *word)
 
 size_t ll_getwordcount(wordNode *curWord, char *word)
 {
-    while (curWord)
+    while (curWord && curWord->string)
     {
         if (0 == strcmp(curWord->string, word))
         {
