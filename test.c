@@ -168,4 +168,18 @@ int main(void)
     snprintf(countStr, 3, "%d", 16);
     printf("Value of countStr: \"%s\"\n", countStr);
     assert(0 == strcmp("16", countStr));
+
+    // tokenize AND count
+    char *tncText = "hello and welcome and welcome to my channel and stay";
+    wordNode *tncList = tokenize_and_count(tncText, strlen(tncText));
+    ll_print(tncList);
+    assert(5 == ll_count(tncList));
+    assert(3 == ll_getwordcount(tncList, "and"));
+    assert(0 == ll_getwordcount(tncList, "asdf"));
+    assert(1 == ll_getwordcount(tncList, "channel"));
+
+    char *tncText2 = " , ";
+    wordNode *tncList2 = tokenize_and_count(tncText2, strlen(tncText2));
+    assert(0 == ll_count(tncList2));
+    assert(0 == ll_getwordcount(tncList2, "asdf"));
 }

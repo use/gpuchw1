@@ -370,6 +370,59 @@ wordNode *tokenize(char *line, size_t len)
     return root;
 }
 
+wordNode *tokenize_and_count(char *line, size_t len)
+{
+    size_t i;
+    int start_index = -1;
+    int end_index = -1;
+    int minlength = 2;
+
+    wordNode *root = malloc(sizeof(wordNode));
+    root->count = 0;
+    root->string = NULL;
+    root->next = NULL;
+
+    for (i = 0; i < len; i++)
+    {
+        // printf("[%ld]: %c\n", i, line[i]);
+        if (isletter(line[i]) && i != len - 1)
+        {
+            if (start_index == -1)
+            {
+                start_index = i;
+                // printf("  Setting start_index to %ld\n", i);
+            }
+        }
+        else
+        {
+            if (start_index != -1)
+            {
+                if (i == len - 1 && isletter(line[i]))
+                {
+                    end_index = i;
+                }
+                else
+                {
+                    end_index = i - 1;
+                }
+                // printf("  Setting end_index to %ld\n", end_index);
+                if ((end_index - start_index + 1) > minlength)
+                {
+                    int strSize = end_index - start_index + 1;
+                    char *newStr = malloc(sizeof(char) * (strSize + 1));
+                    strncpy(newStr, line + start_index, strSize);
+                    newStr[strSize] = '\0';
+                    ll_countword(&root, newStr);
+                }
+                start_index = -1;
+                // printf("  Current words: %s\n", ll_implode(root, '|'));
+            }
+        }
+    }
+
+    return root;
+}
+
 bool isletter(char c)
 {
     int ascii = (int)c;
