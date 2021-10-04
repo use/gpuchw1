@@ -16,7 +16,7 @@ int main(void)
         exit(EXIT_FAILURE);
 
     wordNode *mainList = malloc(sizeof(wordNode));
-    mainList->string = "\0";
+    mainList->string = NULL;
     mainList->next = NULL;
     mainList->count = 0;
 
@@ -57,6 +57,8 @@ int main(void)
     printf("Sort by count:\n");
     ll_sortarray(mainListArray, arrLen, "count");
     ll_printarray(mainListArray, arrLen, 10);
+
+    writearray(mainListArray, arrLen);
 
     fclose(fp);
     if (line)

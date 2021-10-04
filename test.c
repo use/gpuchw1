@@ -106,6 +106,7 @@ int main(void)
     printf("word: %s\n", ll_implode(anotherList, ','));
     wordNode **arr = ll_getarray(anotherList);
     size_t arrCount = ll_count(anotherList);
+    assert(6 == arrCount);
     ll_printarray(arr, arrCount, 1);
     ll_sortarray(arr, arrCount, "string");
     printf("Sorted by string alphabetically:\n");
@@ -160,4 +161,10 @@ int main(void)
     assert(0 == strcmp("|aa |b  |", gettablerow("aa", "b", 2, 1, 3, 3)));
     printf("%s\n", gettablesep(3, 3));
     assert(0 == strcmp("---------", gettablesep(3, 3)));
+
+    // misc
+    char countStr[16];
+    snprintf(countStr, 3, "%d", 16);
+    printf("Value of countStr: \"%s\"\n", countStr);
+    assert(0 == strcmp("16", countStr));
 }

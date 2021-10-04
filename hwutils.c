@@ -87,6 +87,24 @@ void writearray(wordNode *arr[], size_t count)
             longestNumberLen = numberLen;
         }
     }
+
+    char *sep = gettablesep(longestWordLen, longestNumberLen);
+
+    printf("%s\n", sep);
+    for (size_t i = 0; i < count; i++)
+    {
+        int countLen = numberlength(arr[i]->count);
+        char countStr[16];
+        snprintf(countStr, countLen + 1, "%ld", arr[i]->count);
+        printf("%s\n", gettablerow(
+                           arr[i]->string,
+                           countStr,
+                           strlen(arr[i]->string),
+                           countLen,
+                           longestWordLen,
+                           longestNumberLen));
+        printf("%s\n", sep);
+    }
 }
 
 char *gettablerow(char *a_str, char *b_str, int a_len, int b_len, int a_max, int b_max)
@@ -94,13 +112,14 @@ char *gettablerow(char *a_str, char *b_str, int a_len, int b_len, int a_max, int
     int a_right_pad = a_max - a_len;
     int b_right_pad = b_max - b_len;
 
-    char a_pad[a_right_pad];
+    char *a_pad = malloc(sizeof(char) * a_right_pad + 1);
     for (int i = 0; i < a_right_pad; i++)
     {
         a_pad[i] = ' ';
     }
     a_pad[a_right_pad] = '\0';
-    char b_pad[b_right_pad];
+
+    char *b_pad = malloc(sizeof(char) * b_right_pad + 1);
     for (int i = 0; i < b_right_pad; i++)
     {
         b_pad[i] = ' ';
