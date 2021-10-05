@@ -185,11 +185,59 @@ int main(void)
 
     // merge lists
     char *mergeText1 = "hello and welcome to my webpage";
-    char *mergeText2 = "hello and welcome to my channel and say hello";
+    char *mergeText2 = "channel channel and say hello hello and welcome to my";
     wordNode *mergeList1 = tokenize_and_count(mergeText1, strlen(mergeText1));
     wordNode *mergeList2 = tokenize_and_count(mergeText2, strlen(mergeText2));
 
+    printf("mergeList1:\n");
+    ll_print(mergeList1);
+    printf("mergeList2:\n");
+    ll_print(mergeList2);
+
     ll_mergelists(&mergeList1, &mergeList2);
+    assert(3 == ll_getwordcount(mergeList1, "hello"));
+    assert(0 == ll_getwordcount(mergeList1, "asdf"));
+    assert(2 == ll_getwordcount(mergeList1, "channel"));
+    assert(2 == ll_getwordcount(mergeList1, "welcome"));
+    assert(6 == ll_count(mergeList1));
     printf("Merged lists:\n");
     ll_print(mergeList1);
+
+    // blank list (in dest)
+    char *mergeBlankText1 = "";
+    char *mergeBlankText2 = "channel and say hello hello and welcome to my";
+    wordNode *mergeBlankList1 = tokenize_and_count(mergeBlankText1, strlen(mergeBlankText1));
+    wordNode *mergeBlankList2 = tokenize_and_count(mergeBlankText2, strlen(mergeBlankText2));
+    printf("mergeBlankList1:\n");
+    ll_print(mergeBlankList1);
+    printf("mergeBlankList2:\n");
+    ll_print(mergeBlankList2);
+
+    ll_mergelists(&mergeBlankList1, &mergeBlankList2);
+    assert(2 == ll_getwordcount(mergeBlankList1, "hello"));
+    assert(0 == ll_getwordcount(mergeBlankList1, "asdf"));
+    assert(1 == ll_getwordcount(mergeBlankList1, "channel"));
+    assert(1 == ll_getwordcount(mergeBlankList1, "welcome"));
+    assert(5 == ll_count(mergeBlankList1));
+    printf("Merged lists:\n");
+    ll_print(mergeBlankList1);
+
+    // blank list (in src)
+    char *mergeBlankSrcText1 = "channel and say hello hello and welcome to my";
+    char *mergeBlankSrcText2 = "";
+    wordNode *mergeBlankSrcList1 = tokenize_and_count(mergeBlankSrcText1, strlen(mergeBlankSrcText1));
+    wordNode *mergeBlankSrcList2 = tokenize_and_count(mergeBlankSrcText2, strlen(mergeBlankSrcText2));
+    printf("mergeBlankSrcList1:\n");
+    ll_print(mergeBlankSrcList1);
+    printf("mergeBlankSrcList2:\n");
+    ll_print(mergeBlankSrcList2);
+
+    ll_mergelists(&mergeBlankSrcList1, &mergeBlankSrcList2);
+    assert(2 == ll_getwordcount(mergeBlankSrcList1, "hello"));
+    assert(0 == ll_getwordcount(mergeBlankSrcList1, "asdf"));
+    assert(1 == ll_getwordcount(mergeBlankSrcList1, "channel"));
+    assert(1 == ll_getwordcount(mergeBlankSrcList1, "welcome"));
+    assert(5 == ll_count(mergeBlankSrcList1));
+    printf("Merged lists:\n");
+    ll_print(mergeBlankSrcList1);
 }

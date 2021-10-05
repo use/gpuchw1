@@ -174,12 +174,11 @@ void ll_mergelists(wordNode **dest, wordNode **src)
     wordNode *rootDestNode = *dest;
     wordNode *curDestNode = *dest;
     wordNode *curSrcNode = *src;
-    while (curSrcNode)
+    while (curSrcNode && curSrcNode->string)
     {
         size_t done = 0;
-        size_t finalCount = 0;
         size_t totalWords = 0;
-        while (curDestNode->string && done == 0)
+        while (curDestNode && curDestNode->string && done == 0)
         {
             totalWords++;
             if (0 == strcmp(curDestNode->string, curSrcNode->string))
@@ -188,14 +187,14 @@ void ll_mergelists(wordNode **dest, wordNode **src)
                 done = 1;
             }
             if (curDestNode->next)
-                *dest = curDestNode->next;
+                curDestNode = curDestNode->next;
             else
                 break;
         }
         if (done == 0)
         {
             wordNode *newWord = malloc(sizeof(wordNode));
-            newWord->count = 1;
+            newWord->count = curSrcNode->count;
             newWord->next = NULL;
             int newStrLen = strlen(curSrcNode->string);
             newWord->string = malloc(newStrLen + 1);
@@ -204,15 +203,15 @@ void ll_mergelists(wordNode **dest, wordNode **src)
             if (totalWords == 0)
             {
                 *dest = newWord;
+                rootDestNode = newWord;
             }
             else
             {
                 curDestNode->next = newWord;
             }
-            finalCount = newWord->count;
         }
         curDestNode = rootDestNode;
-        *src = curSrcNode->next;
+        curSrcNode = curSrcNode->next;
     }
 }
 
