@@ -6,6 +6,38 @@
 #include <math.h>
 #include "hwutils.h"
 
+typedef struct
+{
+    char **lines;
+    wordNode **results;
+    size_t results_len;
+    size_t start;
+    size_t max;
+    int thread_id;
+} jobSpec;
+
+void *workerThread(void *args)
+{
+    jobSpec *js = (jobSpec *)args;
+    wordNode **lines = js->lines;
+    wordNode **results = js->results;
+    size_t results_len = js->results_len;
+    size_t start = js->start;
+    size_t max = js->max;
+    int thread_id = js->thread_id;
+    size_t index = (size_t)thread_id;
+
+    free(js);
+
+    wordNode *mainList = malloc(sizeof(wordNode));
+    for (; index < max && index < results_len; index++)
+    {
+        wordNode *lineWords = tokenize_and_count(lines[index], strln(lines[index]));
+        ll_mergelists(&mainList, &lineWords);
+    }
+    results[thread_id] = mainList;
+}
+
 int comparebystring(const void *a, const void *b)
 {
     wordNode *ptr_a = *(wordNode **)a;
