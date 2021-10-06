@@ -269,7 +269,7 @@ int main(void)
     }
 
     // create threads
-    int numThreads = 1;
+    int numThreads = 2;
     wordNode *results[numThreads];
     for (int i = 0; i < numThreads; i++)
     {
@@ -279,15 +279,18 @@ int main(void)
         results[i]->string = NULL;
     }
     pthread_t threads[numThreads];
+    size_t linesPerThread = ceil((float)lineCounter / (float)numThreads);
+    printf("lineCounter/numThreads/linesPerThread: %ld/%ld/%ld\n", lineCounter, numThreads, linesPerThread);
+
     for (int i = 0; i < numThreads; i++)
     {
         jobSpec *js = malloc(sizeof(jobSpec));
         js->lines = textLines;
         js->lines_len = lineCounter;
-        js->max = lineCounter;
+        js->max = linesPerThread;
         js->results = results;
         js->results_len = numThreads;
-        js->start = 0;
+        js->start = i * linesPerThread;
         js->thread_id = i;
         if (pthread_create(&(threads[i]), NULL, workerThread, js) != 0)
         {

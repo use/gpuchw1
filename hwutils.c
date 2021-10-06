@@ -16,7 +16,7 @@ void *workerThread(void *args)
     size_t start = js->start;
     size_t max = js->max;
     int thread_id = js->thread_id;
-    size_t index = (size_t)thread_id;
+    size_t index = start;
 
     free(js);
 
