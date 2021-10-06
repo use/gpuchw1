@@ -4,6 +4,7 @@
 #include <stdio.h>
 #include <assert.h>
 #include <math.h>
+#include <pthread.h>
 #include "hwutils.h"
 
 int main(void)
@@ -240,4 +241,71 @@ int main(void)
     assert(5 == ll_count(mergeBlankSrcList1));
     printf("Merged lists:\n");
     ll_print(mergeBlankSrcList1);
+
+    FILE *fp;
+    size_t len = 0;
+    char *textLines[99999];
+    for (int i = 0; i < 99999; i++)
+    {
+        textLines[i] = NULL;
+    }
+    fp = fopen("testfile1", "r");
+    if (fp == NULL)
+    {
+        exit(EXIT_FAILURE);
+    }
+
+    // read in lines
+    size_t lineCounter = 0;
+    while (true)
+    {
+        len = getline(&textLines[lineCounter], &len, fp);
+        if (-1 == len)
+        {
+            break;
+        }
+        lowercase(textLines[lineCounter], len);
+        lineCounter++;
+    }
+
+    // create threads
+    int numThreads = 1;
+    wordNode *results[numThreads];
+    for (int i = 0; i < numThreads; i++)
+    {
+        results[i] = malloc(sizeof(wordNode));
+        results[i]->count = 0;
+        results[i]->next = NULL;
+        results[i]->string = NULL;
+    }
+    pthread_t threads[numThreads];
+    for (int i = 0; i < numThreads; i++)
+    {
+        jobSpec *js = malloc(sizeof(jobSpec));
+        js->lines = textLines;
+        js->lines_len = lineCounter;
+        js->max = lineCounter;
+        js->results = results;
+        js->results_len = numThreads;
+        js->start = 0;
+        js->thread_id = i;
+        if (pthread_create(&(threads[i]), NULL, workerThread, js) != 0)
+        {
+            return EXIT_FAILURE;
+        }
+    }
+
+    for (int i = 0; i < numThreads; i++)
+    {
+        if (pthread_join(threads[i], NULL) != 0)
+        {
+            return EXIT_FAILURE;
+        }
+    }
+
+    for (int i = 0; i < numThreads; i++)
+    {
+        printf("results[%d]:\n", i);
+        ll_print(results[i]);
+    }
 }

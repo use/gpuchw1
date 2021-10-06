@@ -6,20 +6,11 @@
 #include <math.h>
 #include "hwutils.h"
 
-typedef struct
-{
-    char **lines;
-    wordNode **results;
-    size_t results_len;
-    size_t start;
-    size_t max;
-    int thread_id;
-} jobSpec;
-
 void *workerThread(void *args)
 {
     jobSpec *js = (jobSpec *)args;
-    wordNode **lines = js->lines;
+    char **lines = js->lines;
+    size_t lines_len = js->lines_len;
     wordNode **results = js->results;
     size_t results_len = js->results_len;
     size_t start = js->start;
@@ -30,9 +21,13 @@ void *workerThread(void *args)
     free(js);
 
     wordNode *mainList = malloc(sizeof(wordNode));
-    for (; index < max && index < results_len; index++)
+    mainList->count = 0;
+    mainList->string = NULL;
+    mainList->next = NULL;
+    for (; index < start + max && index < lines_len; index++)
     {
-        wordNode *lineWords = tokenize_and_count(lines[index], strln(lines[index]));
+        char *line = lines[index];
+        wordNode *lineWords = tokenize_and_count(line, strlen(line));
         ll_mergelists(&mainList, &lineWords);
     }
     results[thread_id] = mainList;

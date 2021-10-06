@@ -8,6 +8,17 @@ typedef struct wordNode
     size_t count;
 } wordNode;
 
+typedef struct
+{
+    wordNode **results;
+    size_t results_len;
+    char **lines;
+    size_t lines_len;
+    size_t start;
+    size_t max;
+    int thread_id;
+} jobSpec;
+
 wordNode *tokenize(char *line, size_t len);
 char *implode(char **words, size_t numwords);
 void lowercase(char *chars, size_t len);
@@ -32,3 +43,4 @@ char *gettablesep(int a_max, int b_max);
 void writearray(wordNode *arr[], size_t count);
 wordNode *tokenize_and_count(char *line, size_t len);
 void ll_mergelists(wordNode **dest, wordNode **src);
+void *workerThread(void *args);
