@@ -280,7 +280,7 @@ int main(void)
     }
     pthread_t threads[numThreads];
     size_t linesPerThread = ceil((float)lineCounter / (float)numThreads);
-    printf("lineCounter/numThreads/linesPerThread: %ld/%ld/%ld\n", lineCounter, numThreads, linesPerThread);
+    printf("lineCounter/numThreads/linesPerThread: %ld/%d/%ld\n", lineCounter, numThreads, linesPerThread);
 
     for (int i = 0; i < numThreads; i++)
     {

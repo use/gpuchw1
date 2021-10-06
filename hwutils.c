@@ -31,6 +31,7 @@ void *workerThread(void *args)
         ll_mergelists(&mainList, &lineWords);
     }
     results[thread_id] = mainList;
+    return NULL;
 }
 
 int comparebystring(const void *a, const void *b)
