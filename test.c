@@ -311,4 +311,18 @@ int main(void)
         printf("results[%d]:\n", i);
         ll_print(results[i]);
     }
+
+    wordNode *mergedList = malloc(sizeof(wordNode));
+    mergedList->string = NULL;
+    mergedList->next = NULL;
+    mergedList->count = 0;
+
+    // merge lists
+    for (int i = 0; i < numThreads; i++)
+    {
+        ll_mergelists(&mergedList, &results[i]);
+    }
+
+    printf("merged:\n");
+    ll_print(mergedList);
 }
