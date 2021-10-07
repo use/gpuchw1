@@ -86,7 +86,7 @@ int main(void)
 
     // merge lists (threaded)
     int numListsRemaining = numThreads;
-    int numMergingThreads = 2;
+    int numMergingThreads = 6;
     printf("Beginning list merge (%d threads)...\n", numMergingThreads);
 
     bool listCompletionTracker[numThreads];
@@ -103,8 +103,9 @@ int main(void)
     while (numListsRemaining > 1)
     {
         size_t starting_index = 0;
+        bool reached_end = false;
 
-        for (int i = 0; i < numMergingThreads; i++)
+        for (int i = 0; i < numMergingThreads && !reached_end; i++)
         {
             // thread a
             signed long a_dest_index = next_false_value(listCompletionTracker, starting_index, numThreads);
@@ -126,6 +127,10 @@ int main(void)
                 }
                 threadStatusTracker[i] = true;
                 numListsRemaining -= 1;
+            }
+            else
+            {
+                reached_end = true;
             }
         }
 
