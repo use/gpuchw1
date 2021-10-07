@@ -142,8 +142,14 @@ int main(void)
 
     char ignoreShortWordsTestText1[] = "a fire is upon the deep";
     wordNode *ignoreShortWordsTestTokens1 = tokenize(ignoreShortWordsTestText1, strlen(ignoreShortWordsTestText1));
-    assert(5 == ll_count(ignoreShortWordsTestTokens1));
-    assert(0 == strcmp("fire", ll_nodeatindex(ignoreShortWordsTestTokens1, 0)->string));
+    assert(6 == ll_count(ignoreShortWordsTestTokens1));
+    assert(0 == strcmp("fire", ll_nodeatindex(ignoreShortWordsTestTokens1, 1)->string));
+
+    char specialCaseWordsText[] = "a is the best word i think but not z or f ok";
+    wordNode *specialCaseWordsList = tokenize_and_count(specialCaseWordsText, strlen(specialCaseWordsText));
+    assert(1 == ll_getwordcount(specialCaseWordsList, "a"));
+    assert(1 == ll_getwordcount(specialCaseWordsList, "i"));
+    assert(0 == ll_getwordcount(specialCaseWordsList, "f"));
 
     char blankLineTestText[] = "";
     wordNode *blankLineTestTokens = tokenize(blankLineTestText, strlen(blankLineTestText));

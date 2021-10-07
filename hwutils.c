@@ -434,7 +434,16 @@ wordNode *tokenize(char *line, size_t len)
                     end_index = i - 1;
                 }
                 // printf("  Setting end_index to %ld\n", end_index);
-                if ((end_index - start_index + 1) >= minlength)
+                bool special_case_ok = false;
+                // a couple words are ok even if they're only one char long
+                if (start_index == end_index)
+                {
+                    if (line[start_index] == 'i' || line[start_index] == 'a')
+                    {
+                        special_case_ok = true;
+                    }
+                }
+                if (special_case_ok || (end_index - start_index + 1) >= minlength)
                 {
                     int strSize = end_index - start_index + 1;
                     char *newStr = malloc(sizeof(char) * (strSize + 1));
@@ -503,7 +512,16 @@ wordNode *tokenize_and_count(char *line, size_t len)
                     end_index = i - 1;
                 }
                 // printf("  Setting end_index to %ld\n", end_index);
-                if ((end_index - start_index + 1) >= minlength)
+                bool special_case_ok = false;
+                // a couple words are ok even if they're only one char long
+                if (start_index == end_index)
+                {
+                    if (line[start_index] == 'i' || line[start_index] == 'a')
+                    {
+                        special_case_ok = true;
+                    }
+                }
+                if (special_case_ok || (end_index - start_index + 1) >= minlength)
                 {
                     int strSize = end_index - start_index + 1;
                     char *newStr = malloc(sizeof(char) * (strSize + 1));
