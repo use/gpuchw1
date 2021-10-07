@@ -84,69 +84,63 @@ int main(void)
         printf("[thread %d]: %ld unique words\n", i, count);
     }
 
-    printf("Beginning list merge...\n");
-
     // merge lists (threaded)
     int numListsRemaining = numThreads;
     int numMergingThreads = 2;
+    printf("Beginning list merge (%d threads)...\n", numMergingThreads);
+
     bool listCompletionTracker[numThreads];
     for (int i = 0; i < numThreads; i++)
     {
         listCompletionTracker[i] = false;
+    }
+    bool threadStatusTracker[numMergingThreads];
+    for (int i = 0; i < numMergingThreads; i++)
+    {
+        threadStatusTracker[i] = false;
     }
     pthread_t mergeThreads[numMergingThreads];
     while (numListsRemaining > 1)
     {
         size_t starting_index = 0;
 
-        // thread a
-        size_t a_dest_index = next_false_value(listCompletionTracker, starting_index, numThreads);
-        starting_index = a_dest_index + 1;
-        size_t a_src_index = next_false_value(listCompletionTracker, starting_index, numThreads);
-        starting_index = a_src_index + 1;
-
-        listCompletionTracker[a_src_index] = true;
-
-        mergeJobSpec *js_a = malloc(sizeof(mergeJobSpec));
-        js_a->dest = results[a_dest_index];
-        js_a->src = results[a_src_index];
-        printf("[Thread 1] merge list %ld -> %ld\n", a_src_index, a_dest_index);
-        if (pthread_create(&(mergeThreads[0]), NULL, mergeWorkerThread, js_a) != 0)
+        for (int i = 0; i < numMergingThreads; i++)
         {
-            return EXIT_FAILURE;
-        }
-        numListsRemaining -= 1;
+            // thread a
+            signed long a_dest_index = next_false_value(listCompletionTracker, starting_index, numThreads);
+            starting_index = a_dest_index + 1;
+            signed long a_src_index = next_false_value(listCompletionTracker, starting_index, numThreads);
+            starting_index = a_src_index + 1;
 
-        if (numListsRemaining > 2)
-        {
-            // thread b
-            size_t b_dest_index = next_false_value(listCompletionTracker, starting_index, numThreads);
-            starting_index = b_dest_index + 1;
-            size_t b_src_index = next_false_value(listCompletionTracker, starting_index, numThreads);
-            // starting_index = b_src_index + 1; // not needed
-
-            listCompletionTracker[b_src_index] = true;
-
-            mergeJobSpec *js_b = malloc(sizeof(mergeJobSpec));
-            js_b->dest = results[b_dest_index];
-            js_b->src = results[b_src_index];
-            printf("[Thread 2] merge list %ld -> %ld\n", b_src_index, b_dest_index);
-            if (pthread_create(&(mergeThreads[1]), NULL, mergeWorkerThread, js_b) != 0)
+            if (a_dest_index != -1 && a_src_index != -1)
             {
-                return EXIT_FAILURE;
-            }
-            numListsRemaining -= 1;
+                listCompletionTracker[a_src_index] = true;
 
-            if (pthread_join(mergeThreads[1], NULL) != 0)
-            {
-                return EXIT_FAILURE;
+                mergeJobSpec *js_a = malloc(sizeof(mergeJobSpec));
+                js_a->dest = results[a_dest_index];
+                js_a->src = results[a_src_index];
+                printf("[Thread %d] merge list %ld -> %ld\n", i, a_src_index, a_dest_index);
+                if (pthread_create(&(mergeThreads[i]), NULL, mergeWorkerThread, js_a) != 0)
+                {
+                    return EXIT_FAILURE;
+                }
+                threadStatusTracker[i] = true;
+                numListsRemaining -= 1;
             }
         }
 
-        if (pthread_join(mergeThreads[0], NULL) != 0)
+        for (int i = 0; i < numMergingThreads; i++)
         {
-            return EXIT_FAILURE;
+            if (threadStatusTracker[i])
+            {
+                if (pthread_join(mergeThreads[i], NULL) != 0)
+                {
+                    return EXIT_FAILURE;
+                }
+                threadStatusTracker[i] = false;
+            }
         }
+
         printf("[");
         for (size_t i = 0; i < numThreads; i++)
         {
