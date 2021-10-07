@@ -6,6 +6,15 @@
 #include <math.h>
 #include "hwutils.h"
 
+void *mergeWorkerThread(void *args)
+{
+    mergeJobSpec *js = (mergeJobSpec *)args;
+    wordNode *dest = js->dest;
+    wordNode *src = js->src;
+    ll_mergelists(&dest, &src);
+    return NULL;
+}
+
 void *workerThread(void *args)
 {
     jobSpec *js = (jobSpec *)args;
@@ -96,9 +105,9 @@ int numberlength(int n)
     return log10(n) + 1;
 }
 
-int index_of_next_false_value_past_n(bool arr[], size_t n, size_t len)
+int next_false_value(bool arr[], size_t start, size_t len)
 {
-    for (size_t i = n + 1; i < len; i++)
+    for (size_t i = start; i < len; i++)
     {
         if (false == arr[i])
         {

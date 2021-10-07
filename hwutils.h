@@ -21,8 +21,8 @@ typedef struct
 
 typedef struct
 {
-    wordNode **dest;
-    wordNode **src;
+    wordNode *dest;
+    wordNode *src;
 } mergeJobSpec;
 
 wordNode *tokenize(char *line, size_t len);
@@ -50,3 +50,5 @@ void writearray(wordNode *arr[], size_t count);
 wordNode *tokenize_and_count(char *line, size_t len);
 void ll_mergelists(wordNode **dest, wordNode **src);
 void *workerThread(void *args);
+void *mergeWorkerThread(void *args);
+int next_false_value(bool arr[], size_t n, size_t len);
