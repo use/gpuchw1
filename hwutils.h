@@ -46,7 +46,7 @@ int comparebycount(const void *a, const void *b);
 char *gettablerow(char *a_str, char *b_str, int a_len, int b_len, int a_max, int b_max);
 int numberlength(int n);
 char *gettablesep(int a_max, int b_max);
-void writearray(wordNode *arr[], size_t count);
+void writearray(FILE *fp, wordNode *arr[], size_t count);
 wordNode *tokenize_and_count(char *line, size_t len);
 void ll_mergelists(wordNode **dest, wordNode **src);
 void *workerThread(void *args);

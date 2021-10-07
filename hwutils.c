@@ -117,8 +117,13 @@ int next_false_value(bool arr[], size_t start, size_t len)
     return -1;
 }
 
-void writearray(wordNode *arr[], size_t count)
+void writearray(FILE *fp, wordNode *arr[], size_t count)
 {
+    if (fp == NULL)
+    {
+        exit(EXIT_FAILURE);
+    }
+
     char *wordHeader = "English Word";
     char *countHeader = "Count";
     // find longest word // and "longest" count, in chars
@@ -141,29 +146,17 @@ void writearray(wordNode *arr[], size_t count)
 
     char *sep = gettablesep(longestWordLen, longestNumberLen);
 
-    printf("%s\n", sep);
-    printf("%s\n", gettablerow(
-                       wordHeader,
-                       countHeader,
-                       strlen(wordHeader),
-                       strlen(countHeader),
-                       longestWordLen,
-                       longestNumberLen));
-    printf("%s\n", sep);
+    fprintf(fp, "%s\n", sep);
+    fprintf(fp, "%s\n", gettablerow(wordHeader, countHeader, strlen(wordHeader), strlen(countHeader), longestWordLen, longestNumberLen));
+    fprintf(fp, "%s\n", sep);
 
     for (size_t i = 0; i < count; i++)
     {
         int countLen = numberlength(arr[i]->count);
         char countStr[16];
         snprintf(countStr, countLen + 1, "%ld", arr[i]->count);
-        printf("%s\n", gettablerow(
-                           arr[i]->string,
-                           countStr,
-                           strlen(arr[i]->string),
-                           countLen,
-                           longestWordLen,
-                           longestNumberLen));
-        printf("%s\n", sep);
+        fprintf(fp, "%s\n", gettablerow(arr[i]->string, countStr, strlen(arr[i]->string), countLen, longestWordLen, longestNumberLen));
+        fprintf(fp, "%s\n", sep);
     }
 }
 
