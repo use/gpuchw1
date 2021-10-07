@@ -434,7 +434,7 @@ wordNode *tokenize(char *line, size_t len)
                     end_index = i - 1;
                 }
                 // printf("  Setting end_index to %ld\n", end_index);
-                if ((end_index - start_index + 1) > minlength)
+                if ((end_index - start_index + 1) >= minlength)
                 {
                     int strSize = end_index - start_index + 1;
                     char *newStr = malloc(sizeof(char) * (strSize + 1));
@@ -503,7 +503,7 @@ wordNode *tokenize_and_count(char *line, size_t len)
                     end_index = i - 1;
                 }
                 // printf("  Setting end_index to %ld\n", end_index);
-                if ((end_index - start_index + 1) > minlength)
+                if ((end_index - start_index + 1) >= minlength)
                 {
                     int strSize = end_index - start_index + 1;
                     char *newStr = malloc(sizeof(char) * (strSize + 1));

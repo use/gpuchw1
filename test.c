@@ -61,7 +61,7 @@ int main(void)
     printf("count: %ld\n", ll_count(tokenized));
     ll_print(tokenized);
 
-    assert(0 == strcmp(tokenized->string, "was"));
+    assert(0 == strcmp(tokenized->string, "it"));
 
     wordNode *wordat1 = ll_nodeatindex(tokenized, 1);
 
@@ -121,12 +121,13 @@ int main(void)
     ll_sortarray(mainListArr, mainListCount, "string");
     ll_printarray(mainListArr, mainListCount, 1);
     assert(0 == strcmp(mainListArr[0]->string, "and"));
-    assert(0 == strcmp(mainListArr[6]->string, "welcome"));
+    assert(0 == strcmp(mainListArr[4]->string, "my"));
+    assert(0 == strcmp(mainListArr[8]->string, "welcome"));
     printf("Sorted by count:\n");
     ll_sortarray(mainListArr, mainListCount, "count");
     ll_printarray(mainListArr, mainListCount, 1);
     assert(0 == strcmp(mainListArr[0]->string, "hello"));
-    assert(0 == strcmp(mainListArr[6]->string, "there"));
+    assert(0 == strcmp(mainListArr[8]->string, "there"));
     assert(4 == mainListArr[0]->count);
     assert(1 == mainListArr[6]->count);
 
@@ -141,7 +142,7 @@ int main(void)
 
     char ignoreShortWordsTestText1[] = "a fire is upon the deep";
     wordNode *ignoreShortWordsTestTokens1 = tokenize(ignoreShortWordsTestText1, strlen(ignoreShortWordsTestText1));
-    assert(4 == ll_count(ignoreShortWordsTestTokens1));
+    assert(5 == ll_count(ignoreShortWordsTestTokens1));
     assert(0 == strcmp("fire", ll_nodeatindex(ignoreShortWordsTestTokens1, 0)->string));
 
     char blankLineTestText[] = "";
@@ -174,7 +175,7 @@ int main(void)
     char *tncText = "hello and welcome and welcome to my channel and stay";
     wordNode *tncList = tokenize_and_count(tncText, strlen(tncText));
     ll_print(tncList);
-    assert(5 == ll_count(tncList));
+    assert(7 == ll_count(tncList));
     assert(3 == ll_getwordcount(tncList, "and"));
     assert(0 == ll_getwordcount(tncList, "asdf"));
     assert(1 == ll_getwordcount(tncList, "channel"));
@@ -200,7 +201,7 @@ int main(void)
     assert(0 == ll_getwordcount(mergeList1, "asdf"));
     assert(2 == ll_getwordcount(mergeList1, "channel"));
     assert(2 == ll_getwordcount(mergeList1, "welcome"));
-    assert(6 == ll_count(mergeList1));
+    assert(8 == ll_count(mergeList1));
     printf("Merged lists:\n");
     ll_print(mergeList1);
 
@@ -219,7 +220,7 @@ int main(void)
     assert(0 == ll_getwordcount(mergeBlankList1, "asdf"));
     assert(1 == ll_getwordcount(mergeBlankList1, "channel"));
     assert(1 == ll_getwordcount(mergeBlankList1, "welcome"));
-    assert(5 == ll_count(mergeBlankList1));
+    assert(7 == ll_count(mergeBlankList1));
     printf("Merged lists:\n");
     ll_print(mergeBlankList1);
 
@@ -238,7 +239,7 @@ int main(void)
     assert(0 == ll_getwordcount(mergeBlankSrcList1, "asdf"));
     assert(1 == ll_getwordcount(mergeBlankSrcList1, "channel"));
     assert(1 == ll_getwordcount(mergeBlankSrcList1, "welcome"));
-    assert(5 == ll_count(mergeBlankSrcList1));
+    assert(7 == ll_count(mergeBlankSrcList1));
     printf("Merged lists:\n");
     ll_print(mergeBlankSrcList1);
 
