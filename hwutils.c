@@ -96,6 +96,18 @@ int numberlength(int n)
     return log10(n) + 1;
 }
 
+int index_of_next_false_value_past_n(bool arr[], size_t n, size_t len)
+{
+    for (size_t i = n + 1; i < len; i++)
+    {
+        if (false == arr[i])
+        {
+            return i;
+        }
+    }
+    return -1;
+}
+
 void writearray(wordNode *arr[], size_t count)
 {
     char *wordHeader = "English Word";

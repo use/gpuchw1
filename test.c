@@ -317,11 +317,48 @@ int main(void)
     mergedList->next = NULL;
     mergedList->count = 0;
 
-    // merge lists
+    // merge lists (threaded)
+    int numListsRemaining = numThreads;
+    int numMergingThreads = 2;
+    bool listCompletionTracker[numThreads];
     for (int i = 0; i < numThreads; i++)
     {
-        ll_mergelists(&mergedList, &results[i]);
+        listCompletionTracker[i] = false;
     }
+    while (numListsRemaining > 1)
+    {
+        size_t past_n_to_check = 0;
+
+        size_t index_a_1 = index_of_next_false_value(listCompletionTracker, past_n_to_check, numThreads);
+        past_n_to_check = index_a_1;
+        size_t index_a_2 = index_of_next_false_value(listCompletionTracker, past_n_to_check, numThreads);
+        past_n_to_check = index_a_2;
+
+        size_t index_b_1 = index_of_next_false_value(listCompletionTracker, past_n_to_check, numThreads);
+        past_n_to_check = index_a_1;
+        size_t index_b_2 = index_of_next_false_value(listCompletionTracker, past_n_to_check, numThreads);
+        past_n_to_check = index_a_2;
+
+        // mark those 2 indexes completed
+        listCompletionTracker[index_a_2] = true;
+        listCompletionTracker[index_b_2] = true;
+
+        // create 2 threads to do the merges
+
+        mergeJobSpec *js_a = malloc(sizeof(mergeJobSpec));
+        js_a->dest = results[index_a_1];
+        js_a->src = results[index_a_2];
+        if (pthread_create(&(threads[i]), NULL, workerThread, js) != 0)
+        {
+            return EXIT_FAILURE;
+        }
+        numListsRemaining -= 2;
+    }
+    // // merge lists (unthreaded)
+    // for (int i = 0; i < numThreads; i++)
+    // {
+    //     ll_mergelists(&mergedList, &results[i]);
+    // }
 
     printf("merged:\n");
     ll_print(mergedList);
