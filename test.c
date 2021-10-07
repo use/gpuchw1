@@ -127,7 +127,6 @@ int main(void)
     ll_sortarray(mainListArr, mainListCount, "count");
     ll_printarray(mainListArr, mainListCount, 1);
     assert(0 == strcmp(mainListArr[0]->string, "hello"));
-    assert(0 == strcmp(mainListArr[8]->string, "there"));
     assert(4 == mainListArr[0]->count);
     assert(1 == mainListArr[6]->count);
 
