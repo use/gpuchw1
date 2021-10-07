@@ -12,7 +12,7 @@ int main(void)
     char *line = NULL;
     FILE *fp;
     size_t len = 0;
-    char *inFileName = "testfile4";
+    char *inFileName = "testfile2";
     char *textLines[99999];
 
     for (int i = 0; i < 99999; i++)
@@ -39,7 +39,7 @@ int main(void)
     }
 
     // create threads
-    int numThreads = 5;
+    int numThreads = 6;
     wordNode *results[numThreads];
     for (int i = 0; i < numThreads; i++)
     {
@@ -50,7 +50,9 @@ int main(void)
     }
     pthread_t threads[numThreads];
     size_t linesPerThread = ceil((float)lineCounter / (float)numThreads);
-    printf("lineCounter/numThreads/linesPerThread: %ld/%d/%ld\n", lineCounter, numThreads, linesPerThread);
+    printf("Total lines: %ld\n", lineCounter);
+    printf("Threads: %d\n", numThreads);
+    printf("Lines per thread: %ld\n", linesPerThread);
 
     for (int i = 0; i < numThreads; i++)
     {
@@ -78,9 +80,11 @@ int main(void)
 
     for (int i = 0; i < numThreads; i++)
     {
-        printf("results[%d]:\n", i);
-        ll_print(results[i]);
+        size_t count = ll_count(results[i]);
+        printf("[thread %d]: %ld unique words\n", i, count);
     }
+
+    printf("Beginning list merge...\n");
 
     // merge lists (threaded)
     int numListsRemaining = numThreads;
@@ -106,7 +110,7 @@ int main(void)
         mergeJobSpec *js_a = malloc(sizeof(mergeJobSpec));
         js_a->dest = results[a_dest_index];
         js_a->src = results[a_src_index];
-        printf("Starting thread a: %ld -> %ld\n", a_src_index, a_dest_index);
+        printf("[Thread 1] merge list %ld -> %ld\n", a_src_index, a_dest_index);
         if (pthread_create(&(mergeThreads[0]), NULL, mergeWorkerThread, js_a) != 0)
         {
             return EXIT_FAILURE;
@@ -126,7 +130,7 @@ int main(void)
             mergeJobSpec *js_b = malloc(sizeof(mergeJobSpec));
             js_b->dest = results[b_dest_index];
             js_b->src = results[b_src_index];
-            printf("Starting thread b: %ld -> %ld\n", b_src_index, b_dest_index);
+            printf("[Thread 2] merge list %ld -> %ld\n", b_src_index, b_dest_index);
             if (pthread_create(&(mergeThreads[1]), NULL, mergeWorkerThread, js_b) != 0)
             {
                 return EXIT_FAILURE;
@@ -143,18 +147,21 @@ int main(void)
         {
             return EXIT_FAILURE;
         }
+        printf("[");
         for (size_t i = 0; i < numThreads; i++)
         {
-            printf("[%d]", listCompletionTracker[i]);
+            char *status = listCompletionTracker[i] ? "+" : " ";
+            printf("%s", status);
         }
+        printf("]");
         printf("\n");
     }
 
     wordNode **mainListArray = ll_getarray(results[0]);
     size_t arrLen = ll_count(results[0]);
 
-    printf("Size: %lu\n", arrLen);
-    printf("Sort by word:\n");
+    printf("Total unique words: %lu\n", arrLen);
+    printf("Sort by word...\n");
     ll_sortarray(mainListArray, arrLen, "string");
 
     char sort_by_word_suffix[] = "_by_word.txt";
@@ -163,8 +170,9 @@ int main(void)
     FILE *fp_out_by_word = fopen(out_file_name_by_word, "w");
     writearray(fp_out_by_word, mainListArray, arrLen);
     fclose(fp_out_by_word);
+    printf("\tWrote %s\n", out_file_name_by_word);
 
-    printf("Sort by count:\n");
+    printf("Sort by count...\n");
     ll_sortarray(mainListArray, arrLen, "count");
 
     char *sort_by_count_suffix = "_by_count.txt";
@@ -173,6 +181,7 @@ int main(void)
     FILE *fp_out_by_count = fopen(out_file_name_by_count, "w");
     writearray(fp_out_by_count, mainListArray, arrLen);
     fclose(fp_out_by_count);
+    printf("\tWrote %s\n", out_file_name_by_count);
 
     fclose(fp);
     if (line)
