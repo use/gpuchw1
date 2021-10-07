@@ -2,6 +2,8 @@
 #include <stdlib.h>
 #include <ctype.h>
 #include <string.h>
+#include <pthread.h>
+#include <math.h>
 #include "hwutils.h"
 
 int main(void)
@@ -9,42 +11,147 @@ int main(void)
     int numlines;
     char *line = NULL;
     FILE *fp;
-    size_t len;
+    size_t len = 0;
     char *inFileName = "testfile4";
+    char *textLines[99999];
 
+    for (int i = 0; i < 99999; i++)
+    {
+        textLines[i] = NULL;
+    }
     fp = fopen(inFileName, "r");
     if (fp == NULL)
-        exit(EXIT_FAILURE);
-
-    wordNode *mainList = malloc(sizeof(wordNode));
-    mainList->string = NULL;
-    mainList->next = NULL;
-    mainList->count = 0;
-
-    size_t lineCounter = 0;
-    while ((len = getline(&line, &len, fp)) != -1)
     {
-        lineCounter++;
-        lowercase(line, len);
-        // printf("[%lu] Line Length: %zu:\n", lineCounter, len);
-        // printf("\"%s\"\n", line);
+        exit(EXIT_FAILURE);
+    }
 
-        wordNode *curNode = tokenize(line, strlen(line));
-        // ignore blank lines
-        if (!curNode->string)
+    // read in lines
+    size_t lineCounter = 0;
+    while (true)
+    {
+        len = getline(&textLines[lineCounter], &len, fp);
+        if (-1 == len)
         {
-            // printf("Skipping line\n");
-            continue;
+            break;
         }
-        while (curNode)
+        lowercase(textLines[lineCounter], len);
+        lineCounter++;
+    }
+
+    // create threads
+    int numThreads = 5;
+    wordNode *results[numThreads];
+    for (int i = 0; i < numThreads; i++)
+    {
+        results[i] = malloc(sizeof(wordNode));
+        results[i]->count = 0;
+        results[i]->next = NULL;
+        results[i]->string = NULL;
+    }
+    pthread_t threads[numThreads];
+    size_t linesPerThread = ceil((float)lineCounter / (float)numThreads);
+    printf("lineCounter/numThreads/linesPerThread: %ld/%d/%ld\n", lineCounter, numThreads, linesPerThread);
+
+    for (int i = 0; i < numThreads; i++)
+    {
+        jobSpec *js = malloc(sizeof(jobSpec));
+        js->lines = textLines;
+        js->lines_len = lineCounter;
+        js->max = linesPerThread;
+        js->results = results;
+        js->results_len = numThreads;
+        js->start = i * linesPerThread;
+        js->thread_id = i;
+        if (pthread_create(&(threads[i]), NULL, workerThread, js) != 0)
         {
-            // printf("Word: %s\n", curNode->string);
-            size_t count = ll_countword(&mainList, curNode->string);
-            curNode = curNode->next;
+            return EXIT_FAILURE;
         }
     }
-    wordNode **mainListArray = ll_getarray(mainList);
-    size_t arrLen = ll_count(mainList);
+
+    for (int i = 0; i < numThreads; i++)
+    {
+        if (pthread_join(threads[i], NULL) != 0)
+        {
+            return EXIT_FAILURE;
+        }
+    }
+
+    for (int i = 0; i < numThreads; i++)
+    {
+        printf("results[%d]:\n", i);
+        ll_print(results[i]);
+    }
+
+    // merge lists (threaded)
+    int numListsRemaining = numThreads;
+    int numMergingThreads = 2;
+    bool listCompletionTracker[numThreads];
+    for (int i = 0; i < numThreads; i++)
+    {
+        listCompletionTracker[i] = false;
+    }
+    pthread_t mergeThreads[numMergingThreads];
+    while (numListsRemaining > 1)
+    {
+        size_t starting_index = 0;
+
+        // thread a
+        size_t a_dest_index = next_false_value(listCompletionTracker, starting_index, numThreads);
+        starting_index = a_dest_index + 1;
+        size_t a_src_index = next_false_value(listCompletionTracker, starting_index, numThreads);
+        starting_index = a_src_index + 1;
+
+        listCompletionTracker[a_src_index] = true;
+
+        mergeJobSpec *js_a = malloc(sizeof(mergeJobSpec));
+        js_a->dest = results[a_dest_index];
+        js_a->src = results[a_src_index];
+        printf("Starting thread a: %ld -> %ld\n", a_src_index, a_dest_index);
+        if (pthread_create(&(mergeThreads[0]), NULL, mergeWorkerThread, js_a) != 0)
+        {
+            return EXIT_FAILURE;
+        }
+        numListsRemaining -= 1;
+
+        if (numListsRemaining > 2)
+        {
+            // thread b
+            size_t b_dest_index = next_false_value(listCompletionTracker, starting_index, numThreads);
+            starting_index = b_dest_index + 1;
+            size_t b_src_index = next_false_value(listCompletionTracker, starting_index, numThreads);
+            // starting_index = b_src_index + 1; // not needed
+
+            listCompletionTracker[b_src_index] = true;
+
+            mergeJobSpec *js_b = malloc(sizeof(mergeJobSpec));
+            js_b->dest = results[b_dest_index];
+            js_b->src = results[b_src_index];
+            printf("Starting thread b: %ld -> %ld\n", b_src_index, b_dest_index);
+            if (pthread_create(&(mergeThreads[1]), NULL, mergeWorkerThread, js_b) != 0)
+            {
+                return EXIT_FAILURE;
+            }
+            numListsRemaining -= 1;
+
+            if (pthread_join(mergeThreads[1], NULL) != 0)
+            {
+                return EXIT_FAILURE;
+            }
+        }
+
+        if (pthread_join(mergeThreads[0], NULL) != 0)
+        {
+            return EXIT_FAILURE;
+        }
+        for (size_t i = 0; i < numThreads; i++)
+        {
+            printf("[%d]", listCompletionTracker[i]);
+        }
+        printf("\n");
+    }
+
+    wordNode **mainListArray = ll_getarray(results[0]);
+    size_t arrLen = ll_count(results[0]);
 
     printf("Size: %lu\n", arrLen);
     printf("Sort by word:\n");
