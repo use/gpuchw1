@@ -5,6 +5,7 @@
 #include <pthread.h>
 #include <math.h>
 #include "hwutils.h"
+#include "timing.h"
 
 int do_the_thing(
     int numThreads,
@@ -51,19 +52,38 @@ int main(void)
         free(line);
     }
 
+    double t1 = 0;
+    double t2 = 0;
     char fileNamePrefix[256];
 
     printf("================ Run 1 ================\n");
     snprintf(fileNamePrefix, 256, "%s%s", inFileName, "_1_thread_");
+    t1 = currentTime();
     do_the_thing(1, 1, textLines, lineCounter, fileNamePrefix);
+    t2 = currentTime();
+    double cost_1 = t2 - t1;
+    printf("%%%%%% Time: %lf\n", cost_1);
 
-    printf("================ Run 2 ================\n");
+    printf("\n================ Run 2 ================\n");
     snprintf(fileNamePrefix, 256, "%s%s", inFileName, "_4_threads_");
+    t1 = currentTime();
     do_the_thing(4, 1, textLines, lineCounter, fileNamePrefix);
+    t2 = currentTime();
+    double cost_2 = t2 - t1;
+    printf("%%%%%% Time: %lf\n", cost_2);
 
-    printf("================ Run 3 ================\n");
+    printf("\n================ Run 3 ================\n");
     snprintf(fileNamePrefix, 256, "%s%s", inFileName, "_4_threads_parallel_merge_");
+    t1 = currentTime();
     do_the_thing(4, 2, textLines, lineCounter, fileNamePrefix);
+    t2 = currentTime();
+    double cost_3 = t2 - t1;
+    printf("%%%%%% Time: %lf\n", cost_3);
+
+    printf("\n================ Timing Results ================\n");
+    printf("%%%%%% The speedup (SerialTimeCost / ParallelTimeCost) when using 4 threads is %lf\n", cost_1 / cost_2);
+    printf("%%%%%% The efficiency (Speedup / NumProcessorCores) when using 4 threads is %lf\n", cost_1 / cost_2 / 4);
+    printf("%%%%%% The overall speedup when using 2 threads to merge lists is %lf\n", cost_2 / cost_3);
 
     exit(EXIT_SUCCESS);
 }
