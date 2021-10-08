@@ -154,13 +154,13 @@ timeStats *do_the_thing(
         }
     }
 
+    count_end = currentTime();
+
     for (int i = 0; i < numThreads; i++)
     {
         size_t count = ll_count(results[i]);
-        printf("[thread %d]: %ld unique words\n", i, count);
+        printf("[Thread %d]: %ld unique words\n", i, count);
     }
-
-    count_end = currentTime();
 
     // merge lists (threaded)
     merge_start = currentTime();
