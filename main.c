@@ -14,7 +14,7 @@ typedef struct timeStats
     double total_without_io;
 } timeStats;
 
-timeStats *do_the_thing(
+timeStats *run_program(
     int numThreads,
     int numMergingThreads,
     char **textLines,
@@ -69,19 +69,19 @@ int main(void)
     printf("================ Run 1 ================\n");
     printf("(1 counting thread, 1 merging thread)\n");
     snprintf(fileNamePrefix, 256, "%s_%d_%s", inFileName, 1, "thread");
-    timeStats *stats_1 = do_the_thing(1, 1, textLines, lineCounter, fileNamePrefix);
+    timeStats *stats_1 = run_program(1, 1, textLines, lineCounter, fileNamePrefix);
     printf("%%%%%% Time: %lf\n", stats_1->total_without_io);
 
     printf("\n================ Run 2 ================\n");
     printf("(%d counting threads, 1 merging thread)\n", num_count_threads);
     snprintf(fileNamePrefix, 256, "%s_%d_%s", inFileName, num_count_threads, "threads");
-    timeStats *stats_2 = do_the_thing(num_count_threads, 1, textLines, lineCounter, fileNamePrefix);
+    timeStats *stats_2 = run_program(num_count_threads, 1, textLines, lineCounter, fileNamePrefix);
     printf("%%%%%% Time: %lf\n", stats_2->total_without_io);
 
     printf("\n================ Run 3 ================\n");
     printf("(%d counting threads, %d merging threads)\n", num_count_threads, num_merge_threads);
     snprintf(fileNamePrefix, 256, "%s_%d_%s", inFileName, num_count_threads, "threads_parallel_merge");
-    timeStats *stats_3 = do_the_thing(num_count_threads, num_merge_threads, textLines, lineCounter, fileNamePrefix);
+    timeStats *stats_3 = run_program(num_count_threads, num_merge_threads, textLines, lineCounter, fileNamePrefix);
     printf("%%%%%% Time: %lf\n", stats_3->total_without_io);
 
     printf("\n================ Timing Results ================\n");
@@ -101,7 +101,7 @@ int main(void)
     exit(EXIT_SUCCESS);
 }
 
-timeStats *do_the_thing(
+timeStats *run_program(
     int numThreads,
     int numMergingThreads,
     char **textLines,
