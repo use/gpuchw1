@@ -6,6 +6,13 @@
 #include <math.h>
 #include "hwutils.h"
 
+int do_the_thing(
+    int numThreads,
+    int numMergingThreads,
+    char **textLines,
+    size_t numLines,
+    char *fileNamePrefix);
+
 int main(void)
 {
     int numlines;
@@ -38,8 +45,37 @@ int main(void)
         lineCounter++;
     }
 
+    fclose(fp);
+    if (line)
+    {
+        free(line);
+    }
+
+    char fileNamePrefix[256];
+
+    printf("================ Run 1 ================\n");
+    snprintf(fileNamePrefix, 256, "%s%s", inFileName, "_1_thread_");
+    do_the_thing(1, 1, textLines, lineCounter, fileNamePrefix);
+
+    printf("================ Run 2 ================\n");
+    snprintf(fileNamePrefix, 256, "%s%s", inFileName, "_4_threads_");
+    do_the_thing(4, 1, textLines, lineCounter, fileNamePrefix);
+
+    printf("================ Run 3 ================\n");
+    snprintf(fileNamePrefix, 256, "%s%s", inFileName, "_4_threads_parallel_merge_");
+    do_the_thing(4, 2, textLines, lineCounter, fileNamePrefix);
+
+    exit(EXIT_SUCCESS);
+}
+
+int do_the_thing(
+    int numThreads,
+    int numMergingThreads,
+    char **textLines,
+    size_t numLines,
+    char *fileNamePrefix)
+{
     // create threads
-    int numThreads = 6;
     wordNode *results[numThreads];
     for (int i = 0; i < numThreads; i++)
     {
@@ -49,8 +85,8 @@ int main(void)
         results[i]->string = NULL;
     }
     pthread_t threads[numThreads];
-    size_t linesPerThread = ceil((float)lineCounter / (float)numThreads);
-    printf("Total lines: %ld\n", lineCounter);
+    size_t linesPerThread = ceil((float)numLines / (float)numThreads);
+    printf("Total lines: %ld\n", numLines);
     printf("Threads: %d\n", numThreads);
     printf("Lines per thread: %ld\n", linesPerThread);
 
@@ -58,7 +94,7 @@ int main(void)
     {
         jobSpec *js = malloc(sizeof(jobSpec));
         js->lines = textLines;
-        js->lines_len = lineCounter;
+        js->lines_len = numLines;
         js->max = linesPerThread;
         js->results = results;
         js->results_len = numThreads;
@@ -86,7 +122,6 @@ int main(void)
 
     // merge lists (threaded)
     int numListsRemaining = numThreads;
-    int numMergingThreads = 6;
     printf("Beginning list merge (%d threads)...\n", numMergingThreads);
 
     bool listCompletionTracker[numThreads];
@@ -163,9 +198,9 @@ int main(void)
     printf("Sort by word...\n");
     ll_sortarray(mainListArray, arrLen, "string");
 
-    char sort_by_word_suffix[] = "_by_word.txt";
+    char sort_by_word_suffix[] = "_sort_by_word.txt";
     char out_file_name_by_word[256];
-    snprintf(out_file_name_by_word, 256, "%s%s", inFileName, sort_by_word_suffix);
+    snprintf(out_file_name_by_word, 256, "%s%s", fileNamePrefix, sort_by_word_suffix);
     FILE *fp_out_by_word = fopen(out_file_name_by_word, "w");
     writearray(fp_out_by_word, mainListArray, arrLen);
     fclose(fp_out_by_word);
@@ -174,17 +209,11 @@ int main(void)
     printf("Sort by count...\n");
     ll_sortarray(mainListArray, arrLen, "count");
 
-    char *sort_by_count_suffix = "_by_count.txt";
+    char *sort_by_count_suffix = "_sort_by_count.txt";
     char out_file_name_by_count[256];
-    snprintf(out_file_name_by_count, 256, "%s%s", inFileName, sort_by_count_suffix);
+    snprintf(out_file_name_by_count, 256, "%s%s", fileNamePrefix, sort_by_count_suffix);
     FILE *fp_out_by_count = fopen(out_file_name_by_count, "w");
     writearray(fp_out_by_count, mainListArray, arrLen);
     fclose(fp_out_by_count);
     printf("\tWrote %s\n", out_file_name_by_count);
-
-    fclose(fp);
-    if (line)
-        free(line);
-
-    exit(EXIT_SUCCESS);
 }
