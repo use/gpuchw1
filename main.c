@@ -7,7 +7,14 @@
 #include "hwutils.h"
 #include "timing.h"
 
-int do_the_thing(
+typedef struct timeStats
+{
+    double word_count;
+    double list_merge;
+    double total_without_io;
+} timeStats;
+
+timeStats *do_the_thing(
     int numThreads,
     int numMergingThreads,
     char **textLines,
@@ -56,46 +63,58 @@ int main(void)
     double t2 = 0;
     char fileNamePrefix[256];
 
+    int num_count_threads = 4;
+    int num_merge_threads = 2;
+
     printf("================ Run 1 ================\n");
-    snprintf(fileNamePrefix, 256, "%s%s", inFileName, "_1_thread_");
-    t1 = currentTime();
-    do_the_thing(1, 1, textLines, lineCounter, fileNamePrefix);
-    t2 = currentTime();
-    double cost_1 = t2 - t1;
-    printf("%%%%%% Time: %lf\n", cost_1);
+    printf("(1 counting thread, 1 merging thread)\n");
+    snprintf(fileNamePrefix, 256, "%s_%d_%s", inFileName, 1, "thread");
+    timeStats *stats_1 = do_the_thing(1, 1, textLines, lineCounter, fileNamePrefix);
+    printf("%%%%%% Time: %lf\n", stats_1->total_without_io);
 
     printf("\n================ Run 2 ================\n");
-    snprintf(fileNamePrefix, 256, "%s%s", inFileName, "_4_threads_");
-    t1 = currentTime();
-    do_the_thing(4, 1, textLines, lineCounter, fileNamePrefix);
-    t2 = currentTime();
-    double cost_2 = t2 - t1;
-    printf("%%%%%% Time: %lf\n", cost_2);
+    printf("(%d counting threads, 1 merging thread)\n", num_count_threads);
+    snprintf(fileNamePrefix, 256, "%s_%d_%s", inFileName, num_count_threads, "threads");
+    timeStats *stats_2 = do_the_thing(num_count_threads, 1, textLines, lineCounter, fileNamePrefix);
+    printf("%%%%%% Time: %lf\n", stats_2->total_without_io);
 
     printf("\n================ Run 3 ================\n");
-    snprintf(fileNamePrefix, 256, "%s%s", inFileName, "_4_threads_parallel_merge_");
-    t1 = currentTime();
-    do_the_thing(4, 2, textLines, lineCounter, fileNamePrefix);
-    t2 = currentTime();
-    double cost_3 = t2 - t1;
-    printf("%%%%%% Time: %lf\n", cost_3);
+    printf("(%d counting threads, %d merging threads)\n", num_count_threads, num_merge_threads);
+    snprintf(fileNamePrefix, 256, "%s_%d_%s", inFileName, num_count_threads, "threads_parallel_merge");
+    timeStats *stats_3 = do_the_thing(num_count_threads, num_merge_threads, textLines, lineCounter, fileNamePrefix);
+    printf("%%%%%% Time: %lf\n", stats_3->total_without_io);
 
     printf("\n================ Timing Results ================\n");
-    printf("%%%%%% The speedup (SerialTimeCost / ParallelTimeCost) when using 4 threads is %lf\n", cost_1 / cost_2);
-    printf("%%%%%% The efficiency (Speedup / NumProcessorCores) when using 4 threads is %lf\n", cost_1 / cost_2 / 4);
-    printf("%%%%%% The overall speedup when using 2 threads to merge lists is %lf\n", cost_2 / cost_3);
+    printf("%%%%%% The speedup of counting with %d threads: %lf\n",
+           num_count_threads,
+           stats_1->word_count / stats_2->word_count);
+    printf("%%%%%% The efficiency of counting with %d threads: %lf\n",
+           num_count_threads,
+           stats_1->word_count / stats_2->word_count / num_count_threads);
+    printf("%%%%%% The speedup of the merge operation with %d threads: %lf\n",
+           num_merge_threads,
+           stats_2->list_merge / stats_3->list_merge);
+    printf("%%%%%% The efficiency of the merge operation with %d threads: %lf\n",
+           num_merge_threads,
+           stats_2->list_merge / stats_3->list_merge / num_merge_threads);
 
     exit(EXIT_SUCCESS);
 }
 
-int do_the_thing(
+timeStats *do_the_thing(
     int numThreads,
     int numMergingThreads,
     char **textLines,
     size_t numLines,
     char *fileNamePrefix)
 {
+    double count_start = 0;
+    double count_end = 0;
+    double merge_start = 0;
+    double merge_end = 0;
+
     // create threads
+    count_start = currentTime();
     wordNode *results[numThreads];
     for (int i = 0; i < numThreads; i++)
     {
@@ -109,6 +128,7 @@ int do_the_thing(
     printf("Total lines: %ld\n", numLines);
     printf("Threads: %d\n", numThreads);
     printf("Lines per thread: %ld\n", linesPerThread);
+    printf("Beginning count (%d threads)...\n", numThreads);
 
     for (int i = 0; i < numThreads; i++)
     {
@@ -122,7 +142,7 @@ int do_the_thing(
         js->thread_id = i;
         if (pthread_create(&(threads[i]), NULL, workerThread, js) != 0)
         {
-            return EXIT_FAILURE;
+            printf("Couldn't create thread\n");
         }
     }
 
@@ -130,7 +150,7 @@ int do_the_thing(
     {
         if (pthread_join(threads[i], NULL) != 0)
         {
-            return EXIT_FAILURE;
+            printf("Couldn't join thread\n");
         }
     }
 
@@ -140,7 +160,10 @@ int do_the_thing(
         printf("[thread %d]: %ld unique words\n", i, count);
     }
 
+    count_end = currentTime();
+
     // merge lists (threaded)
+    merge_start = currentTime();
     int numListsRemaining = numThreads;
     printf("Beginning list merge (%d threads)...\n", numMergingThreads);
 
@@ -162,23 +185,23 @@ int do_the_thing(
 
         for (int i = 0; i < numMergingThreads && !reached_end; i++)
         {
-            // thread a
-            signed long a_dest_index = next_false_value(listCompletionTracker, starting_index, numThreads);
-            starting_index = a_dest_index + 1;
-            signed long a_src_index = next_false_value(listCompletionTracker, starting_index, numThreads);
-            starting_index = a_src_index + 1;
+            // thread setup
+            signed long dest_index = next_false_value(listCompletionTracker, starting_index, numThreads);
+            starting_index = dest_index + 1;
+            signed long src_index = next_false_value(listCompletionTracker, starting_index, numThreads);
+            starting_index = src_index + 1;
 
-            if (a_dest_index != -1 && a_src_index != -1)
+            if (dest_index != -1 && src_index != -1)
             {
-                listCompletionTracker[a_src_index] = true;
+                listCompletionTracker[src_index] = true;
 
-                mergeJobSpec *js_a = malloc(sizeof(mergeJobSpec));
-                js_a->dest = results[a_dest_index];
-                js_a->src = results[a_src_index];
-                printf("[Thread %d] merge list %ld -> %ld\n", i, a_src_index, a_dest_index);
-                if (pthread_create(&(mergeThreads[i]), NULL, mergeWorkerThread, js_a) != 0)
+                mergeJobSpec *js = malloc(sizeof(mergeJobSpec));
+                js->dest = results[dest_index];
+                js->src = results[src_index];
+                printf("[Thread %d] merge list %ld -> %ld\n", i, src_index, dest_index);
+                if (pthread_create(&(mergeThreads[i]), NULL, mergeWorkerThread, js) != 0)
                 {
-                    return EXIT_FAILURE;
+                    printf("Couldn't create thread\n");
                 }
                 threadStatusTracker[i] = true;
                 numListsRemaining -= 1;
@@ -195,7 +218,7 @@ int do_the_thing(
             {
                 if (pthread_join(mergeThreads[i], NULL) != 0)
                 {
-                    return EXIT_FAILURE;
+                    printf("Couldn't join thread\n");
                 }
                 threadStatusTracker[i] = false;
             }
@@ -210,6 +233,8 @@ int do_the_thing(
         printf("]");
         printf("\n");
     }
+
+    merge_end = currentTime();
 
     wordNode **mainListArray = ll_getarray(results[0]);
     size_t arrLen = ll_count(results[0]);
@@ -236,4 +261,11 @@ int do_the_thing(
     writearray(fp_out_by_count, mainListArray, arrLen);
     fclose(fp_out_by_count);
     printf("\tWrote %s\n", out_file_name_by_count);
+
+    timeStats *stats = malloc(sizeof(timeStats));
+    stats->word_count = count_end - count_start;
+    stats->list_merge = merge_end - merge_start;
+    stats->total_without_io = stats->word_count + stats->list_merge;
+
+    return stats;
 }
